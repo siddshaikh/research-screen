@@ -23,7 +23,8 @@ function App() {
         <ToastContainer />
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={userToken ? <Home /> : <NotFound />} />
+          <Route path="/" element={userToken ? <Home /> : <Login />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </ThemeProvider>
     </div>

@@ -3,7 +3,7 @@ import React from "react";
 const NotFound = () => {
   return (
     <div>
-      <h1>Please Login first</h1>
+      <h1 style={{ textAlign: "center" }}>404: Page Not Found</h1>
     </div>
   );
 };

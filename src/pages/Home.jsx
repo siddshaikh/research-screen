@@ -60,7 +60,10 @@ const Home = () => {
   // dates end
   const [qc1, setQc1] = useState([]);
   const [language, setLanguage] = useState("");
+  // selecting continent
   const [continent, setContinent] = useState([]);
+  // basis onn the selection of the continent showing th country
+  const [country, setCountry] = useState("");
   const [filteredCountries, setFilteredCountries] = useState([]);
   const navigate = useNavigate();
   const { clients } = useContext(ResearchContext);
@@ -306,10 +309,9 @@ const Home = () => {
         <InputLabel id="countries-select-label">Countries</InputLabel>
         <Select
           id="countries"
-          value={filteredCountries}
-          onChange={handleContinentChange}
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
           input={<OutlinedInput label="Tag" />}
-          renderValue={(selected) => selected.join(", ")}
           MenuProps={MenuProps}
         >
           {filteredCountries.map((country) => (

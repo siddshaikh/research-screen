@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Checkbox,
@@ -39,19 +39,18 @@ for (let id = 1; id <= 50; id++) {
 const CompanyData = () => {
   const [singleValue, setSingleValue] = useState();
   const [selectedRows, setSelectedRows] = useState([]);
-
+  console.log(singleValue, selectedRows);
   // Function to handle the selection of a row
   const handleRowSelect = (rowId) => {
     if (selectedRows.includes(rowId)) {
       setSelectedRows(selectedRows.filter((id) => id !== rowId));
     } else {
-      setSelectedRows([...selectedRows, rowId]);
+      setSelectedRows([...singleValue, ...selectedRows, rowId]);
     }
   };
 
   const handleApplyChanges = () => {
-    console.log("Selected Rows:", selectedRows);
-    console.log("Single Value:", singleValue);
+    // setSelectedRows((prev) => [...singleValue, prev]);
   };
 
   return (
@@ -86,7 +85,7 @@ const CompanyData = () => {
                     }
                   }}
                 />
-                Select All
+                Select
               </TableCell>
               <TableCell>UserID</TableCell>
               <TableCell>UserName</TableCell>
@@ -110,7 +109,7 @@ const CompanyData = () => {
                 <TableCell>{row.username}</TableCell>
                 <TableCell>{row.email}</TableCell>
                 <TableCell contentEditable>{row.about}</TableCell>
-                <TableCell>{row.password}</TableCell>
+                <TableCell contentEditable>{row.password}</TableCell>
                 <TableCell>{format(row.birthdate, "yyyy-MM-dd")}</TableCell>
                 <TableCell>
                   {format(row.registeredAt, "yyyy-MM-dd HH:mm:ss")}
