@@ -40,14 +40,13 @@ const CompanyData = () => {
   const [tableHeaders, setTableHeaders] = useState();
   const [companyId, setCompanyId] = useState([]);
   // ids of the selected rows
-  const [rowId, setRowId] = useState([]);
-  console.log("rowId", rowId);
+  const [rowIds, setRowIds] = useState([]);
+  const [singleId, setSingleId] = useState("");
+  console.log(singleId);
   // dropdown items (for editing/updating row values)
   const [editRow, setEditRow] = useState("");
-  console.log(editRow);
   // selectedRowData
   const [selectedRowData, setSelectedRowData] = useState([]);
-  console.log(selectedRowData);
   // Function to fetch table data
   const fetchTableData = async () => {
     try {
@@ -110,13 +109,19 @@ const CompanyData = () => {
   }, [companies, company]);
   // finding matching values
   useEffect(() => {
-    const rowIds = selectedRowData.map((item) => item.social_feed_id);
-    setRowId(rowIds);
+    const rowId = selectedRowData.map((item) => item.social_feed_id);
+    setRowIds(rowId);
+
     const findMatchingValue = () => {
-      const matchingData = selectedRowData.find(
-        (row) => row[editRow] !== undefined
-      );
-      return matchingData ? matchingData[editRow] : "Value not found";
+      const output = selectedRowData
+        .filter((row) => row.social_feed_id === singleId)
+        .find((row) => row[editRow] !== undefined);
+
+      return output ? output[editRow] : "No Values";
+      // const matchingData = selectedRowData.find(
+      //   (row) => row[editRow] !== undefined
+      // );
+      // return matchingData ? matchingData[editRow] : "No Values";
     };
 
     // Call this function when you want to find the matching value
@@ -139,8 +144,10 @@ const CompanyData = () => {
   const handleMasterCheckboxChange = () => {
     if (selectedRows.length === tableData.length) {
       setSelectedRows([]);
+      setSelectedRowData([]);
     } else {
       setSelectedRows([...tableData?.map((_, index) => index)]);
+      setSelectedRowData([...tableData]);
     }
   };
 
@@ -185,9 +192,17 @@ const CompanyData = () => {
         {/* ids of the selected rows => user can select id and edit related field */}
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel>Select RowId</InputLabel>
-          <Select>
-            {rowId &&
-              rowId.map((item) => <MenuItem key={item}>{item}</MenuItem>)}
+          <Select
+            label="Select RowId"
+            value={singleId}
+            onChange={(e) => setSingleId(e.target.value)}
+          >
+            {rowIds &&
+              rowIds.map((item) => (
+                <MenuItem key={item} value={item}>
+                  {item}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
         <FormControl sx={{ width: "15rem" }}>
