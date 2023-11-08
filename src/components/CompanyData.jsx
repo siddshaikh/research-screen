@@ -42,7 +42,6 @@ const CompanyData = () => {
   // ids of the selected rows
   const [rowIds, setRowIds] = useState([]);
   const [singleId, setSingleId] = useState("");
-  console.log(singleId);
   // dropdown items (for editing/updating row values)
   const [editRow, setEditRow] = useState("");
   // selectedRowData
@@ -118,16 +117,12 @@ const CompanyData = () => {
         .find((row) => row[editRow] !== undefined);
 
       return output ? output[editRow] : "No Values";
-      // const matchingData = selectedRowData.find(
-      //   (row) => row[editRow] !== undefined
-      // );
-      // return matchingData ? matchingData[editRow] : "No Values";
     };
 
     // Call this function when you want to find the matching value
     const matchingValue = findMatchingValue();
     setSingleValue(matchingValue && matchingValue);
-  }, [selectedRowData, editRow]);
+  }, [selectedRowData, editRow, singleId]);
   // Function to handle the selection of a row
   const handleRowSelect = (rowIndex, rowData) => {
     if (selectedRows.includes(rowIndex)) {
