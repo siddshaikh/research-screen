@@ -48,17 +48,11 @@ const Home = () => {
   const theme = useTheme();
   const [clientName, setClientName] = useState([]);
   // clientId for the fetching company
-  const [clientId, setClientId] = useState("");
-  // company setting when getting clientId from the clients
-  const [company, setCompany] = useState([]);
-  // selected compnies
-  const [companies, setCompanies] = useState([]);
+  // const [clientId, setClientId] = useState("");
+
+  // data type separate
   const [dataType, setDataType] = useState([]);
-  // dates
-  const [fromDate, setFromDate] = useState("");
-  const [dateNow, setDateNow] = useState("");
-  // dates end
-  const [qc1, setQc1] = useState([]);
+
   const [language, setLanguage] = useState("");
   // selecting continent
   const [continent, setContinent] = useState([]);
@@ -66,7 +60,22 @@ const Home = () => {
   const [country, setCountry] = useState("");
   const [filteredCountries, setFilteredCountries] = useState([]);
   const navigate = useNavigate();
-  const { clients } = useContext(ResearchContext);
+  const {
+    clients,
+    clientId,
+    setClientId,
+    company,
+    setCompany,
+    companies,
+    setCompanies,
+    fromDate,
+    setFromDate,
+    dateNow,
+    setDateNow,
+    qc1,
+    setQc1,
+    setShowTableData,
+  } = useContext(ResearchContext);
   const fetchCompany = async () => {
     try {
       const result =
@@ -74,14 +83,18 @@ const Home = () => {
         (await axios.get(`http://51.68.220.77:8000/companylist/${clientId}`));
       if (result) {
         setCompany(result.data.companies);
+        setCompanies([]);
+        setShowTableData(false);
       }
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
-    fetchCompany();
-  }, [clientName]);
+    if (clientId) {
+      fetchCompany();
+    }
+  }, [clientId]);
   const handleChange = (event) => {
     const {
       target: { value },
@@ -137,13 +150,19 @@ const Home = () => {
     setContinent(selectedContinent);
     setFilteredCountries(selectedCountries);
   };
-  const handleSearch = () => {};
+  const handleSearch = () => {
+    setShowTableData(true);
+  };
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/login");
   };
   return (
     <div>
+      {/* title */}
+      <h2 className="text-center mb-4 font-bold text-lg uppercase">
+        Research Screen
+      </h2>
       {/* Category dropdowns filter out */}
       {/* client */}
       <FormControl sx={{ m: 1, width: 300 }}>
@@ -186,7 +205,6 @@ const Home = () => {
                 key={companyItem.companyid}
                 value={companyItem.companyname}
               >
-                <Checkbox checked={company.indexOf(company) > -1} />
                 <ListItemText primary={companyItem.companyname} />
               </MenuItem>
             ))}
@@ -334,7 +352,7 @@ const Home = () => {
         Search
       </Button>
       {/* logout */}
-      <div>
+      <div className="text-right mr-4">
         <Button variant="contained" onClick={handleLogout}>
           Logout
         </Button>
@@ -342,7 +360,9 @@ const Home = () => {
       {/* divider */}
       <Divider variant="middle" sx={{ m: 2 }} />
       {/* table */}
-      <CompanyData />
+      <div>
+        <CompanyData />
+      </div>
     </div>
   );
 };

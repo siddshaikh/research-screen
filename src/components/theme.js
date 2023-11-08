@@ -11,8 +11,8 @@ const theme = createTheme({
   },
   components: {
     MuiInput: {
-      styleOverrides: {
-        focused: {
+      root: {
+        "&.Mui-focused": {
           borderColor: "#808080",
         },
       },
