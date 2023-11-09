@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Button,
   Checkbox,
@@ -33,20 +33,19 @@ const CompanyData = () => {
   } = useContext(ResearchContext);
 
   // state variables
-  const [singleValue, setSingleValue] = useState("");
-  const [selectedRows, setSelectedRows] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [error, setError] = useState("");
   const [tableHeaders, setTableHeaders] = useState();
   const [companyId, setCompanyId] = useState([]);
-  // ids of the selected rows
-  const [rowIds, setRowIds] = useState([]);
-  const [singleId, setSingleId] = useState("");
   // dropdown items (for editing/updating row values)
   const [editRow, setEditRow] = useState("");
   // selectedRowData
   const [selectedRowData, setSelectedRowData] = useState([]);
+  // data for the edit
+  const [editValue, setEditValue] = useState("");
   // Function to fetch table data
+  // updatedrows
+  const [updatedRows, setUpadatedRows] = useState([]);
   const fetchTableData = async () => {
     try {
       const request_data = {
@@ -106,48 +105,69 @@ const CompanyData = () => {
       ? setCompanyId(companyIds.map((item) => `'${item}'`).join(","))
       : setCompanyId([]);
   }, [companies, company]);
-  // finding matching values
+  // effect for the setting data for the editing row data basis on dropdown selection
   useEffect(() => {
-    const rowId = selectedRowData.map((item) => item.social_feed_id);
-    setRowIds(rowId);
+    const editRowValues = selectedRowData
+      .map((item) => item[editRow])
+      .filter((value) => value !== undefined);
+    setEditValue(editRowValues ? editRowValues.join(" ") : "");
+  }, [selectedRowData, editRow]);
 
-    const findMatchingValue = () => {
-      const output = selectedRowData
-        .filter((row) => row.social_feed_id === singleId)
-        .find((row) => row[editRow] !== undefined);
-
-      return output ? output[editRow] : "No Values";
-    };
-
-    // Call this function when you want to find the matching value
-    const matchingValue = findMatchingValue();
-    setSingleValue(matchingValue && matchingValue);
-  }, [selectedRowData, editRow, singleId]);
   // Function to handle the selection of a row
-  const handleRowSelect = (rowIndex, rowData) => {
-    if (selectedRows.includes(rowIndex)) {
-      // Deselect the row by removing its data
-      setSelectedRows(selectedRows.filter((id) => id !== rowIndex));
-      setSelectedRowData(selectedRowData.filter((data) => data !== rowData));
-    } else {
-      // Select the row and store its data
-      setSelectedRows([...selectedRows, rowIndex]);
-      setSelectedRowData([...selectedRowData, rowData]);
-    }
+  const handleRowSelect = (rowData) => {
+    const isSelected = selectedRowData.includes(rowData);
+
+    setSelectedRowData(
+      isSelected
+        ? selectedRowData.filter((data) => data !== rowData)
+        : [...selectedRowData, rowData]
+    );
   };
 
   const handleMasterCheckboxChange = () => {
-    if (selectedRows.length === tableData.length) {
-      setSelectedRows([]);
-      setSelectedRowData([]);
-    } else {
-      setSelectedRows([...tableData?.map((_, index) => index)]);
-      setSelectedRowData([...tableData]);
-    }
+    const allSelected = selectedRowData.length === tableData.length;
+
+    setSelectedRowData(allSelected ? [] : [...tableData]);
   };
 
   const handleApplyChanges = () => {
-    // Handle apply changes logic here
+    // Check if any rows are selected
+    if (selectedRowData.length > 0) {
+      const updatedRowsData = selectedRowData.map((selectedRow) => {
+        const rowIndex = tableData.findIndex((row) => row === selectedRow);
+
+        if (rowIndex !== -1) {
+          return {
+            ...selectedRow,
+            [editRow]: editValue,
+          };
+        }
+
+        return null;
+      });
+
+      setUpadatedRows((prevUpdatedRows) => [
+        ...prevUpdatedRows,
+        ...updatedRowsData,
+      ]);
+
+      setTableData((prevTableData) => {
+        const updatedTableData = [...prevTableData];
+
+        // Loop through selected rows and update the "editrow" field
+        updatedRowsData.forEach((updatedRow) => {
+          const rowIndex = updatedTableData.findIndex(
+            (row) => row === updatedRow
+          );
+
+          if (rowIndex !== -1) {
+            updatedTableData[rowIndex] = updatedRow;
+          }
+        });
+
+        return updatedTableData;
+      });
+    }
   };
 
   const handleSort = () => {
@@ -159,47 +179,61 @@ const CompanyData = () => {
     });
     setTableData(sortedData);
   };
-
+  const handlePostData = async () => {
+    const dt = updatedRows.map((row) => {
+      return {
+        // "SOCIALFEEDID": 18150502887,
+        // "COMPANYID": "ARC", this two columns are mandatory  and 1 or more         "KEYWORD": "Updated Keyword 1",
+        // "REPORTINGTONE": 2,
+        // "REPORTINGSUBJECT": "Updated Reporting Subject 1",
+        // "SUBCATEGORY": "Updated Subcategory 1",
+        // "PROMINENCE": 1.6,
+        // "DETAILSUMMARY": "Updated Detail Summary 1"
+      };
+    });
+    console.log(dt);
+    try {
+      const url = "http://51.68.220.77:8000/update2database/";
+      await axios.post(url, {});
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const renderTableData = () => {
     return showTableData ? (
-      tableData.map((rowData, rowIndex) => (
-        <TableRow key={rowIndex}>
-          <TableCell>
-            <Checkbox
-              checked={selectedRows.includes(rowIndex)}
-              onChange={() => handleRowSelect(rowIndex, rowData)}
-            />
-          </TableCell>
-          {tableHeaders.map((header) => (
-            <TableCell key={header}>{rowData[header]}</TableCell>
-          ))}
-        </TableRow>
-      ))
+      tableData.length > 0 &&
+        tableData.map((rowData, rowIndex) => (
+          <TableRow key={rowIndex}>
+            <TableCell>
+              <Checkbox
+                checked={selectedRowData.includes(rowData)}
+                onChange={() => handleRowSelect(rowData)}
+              />
+            </TableCell>
+            {tableHeaders.map((header, index) => (
+              <TableCell
+                key={header}
+                style={{
+                  backgroundColor: index % 2 === 1 ? "lightgray" : "white",
+                  maxHeight: "50px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {rowData[header]}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))
     ) : (
-      <Typography>No data found.</Typography>
+      <p className="text-red-500 w-screen text-center">No data found.</p>
     );
   };
 
   return (
-    <div>
+    <div style={{ position: "relative" }}>
       {/* filters for editing the cells */}
       <Container sx={{ display: "flex", justifyContent: "center", gap: 3 }}>
-        {/* ids of the selected rows => user can select id and edit related field */}
-        <FormControl sx={{ width: "15rem" }}>
-          <InputLabel>Select RowId</InputLabel>
-          <Select
-            label="Select RowId"
-            value={singleId}
-            onChange={(e) => setSingleId(e.target.value)}
-          >
-            {rowIds &&
-              rowIds.map((item) => (
-                <MenuItem key={item} value={item}>
-                  {item}
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel>Select Row</InputLabel>
           <Select
@@ -215,8 +249,8 @@ const CompanyData = () => {
           </Select>
         </FormControl>
         <TextField
-          value={singleValue}
-          onChange={(e) => setSingleValue(e.target.value)}
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
         />
         <Button variant="outlined" onClick={handleApplyChanges}>
           Apply
@@ -230,23 +264,28 @@ const CompanyData = () => {
         </span>
       </Container>
       {/* main table */}
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead sx={{ bgcolor: "#e3e1e1" }}>
-            <TableRow>
-              <TableCell>
-                <Checkbox
-                  checked={selectedRows.length === tableData.length}
-                  onChange={handleMasterCheckboxChange}
-                />
-              </TableCell>
+      <div>
+        <table>
+          <thead>
+            <tr className="sticky top-0 bg-slate-400">
+              {showTableData && (
+                <tr>
+                  <Checkbox
+                    checked={selectedRowData.length === tableData.length}
+                    onChange={handleMasterCheckboxChange}
+                  />
+                </tr>
+              )}
+
               {showTableData &&
-                tableHeaders.map((headers) => <TableCell>{headers}</TableCell>)}
-            </TableRow>
-          </TableHead>
-          <TableBody>{renderTableData()}</TableBody>
-        </Table>
-      </TableContainer>
+                tableHeaders.map((headers) => (
+                  <TableCell key={headers}>{headers}</TableCell>
+                ))}
+            </tr>
+          </thead>
+          <tbody>{renderTableData()}</tbody>
+        </table>
+      </div>
     </div>
   );
 };

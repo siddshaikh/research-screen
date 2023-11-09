@@ -76,6 +76,7 @@ const Home = () => {
     setQc1,
     setShowTableData,
   } = useContext(ResearchContext);
+  console.log(companies);
   const fetchCompany = async () => {
     try {
       const result =
@@ -151,7 +152,11 @@ const Home = () => {
     setFilteredCountries(selectedCountries);
   };
   const handleSearch = () => {
-    setShowTableData(true);
+    setShowTableData(
+      (companies && companies.length === 1) || companies.length > 1
+        ? true
+        : false
+    );
   };
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -175,15 +180,16 @@ const Home = () => {
           input={<OutlinedInput label="Name" />}
           MenuProps={MenuProps}
         >
-          {clients.map((client) => (
-            <MenuItem
-              key={client.clientid}
-              value={client.clientname}
-              style={getStyles(client.clientname, clientName, theme)}
-            >
-              {client.clientname}
-            </MenuItem>
-          ))}
+          {clients &&
+            clients.map((client) => (
+              <MenuItem
+                key={client.clientid}
+                value={client.clientname}
+                style={getStyles(client.clientname, clientName, theme)}
+              >
+                {client.clientname}
+              </MenuItem>
+            ))}
         </Select>
       </FormControl>
       {/* comapany */}
