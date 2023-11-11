@@ -11,6 +11,8 @@ const ContextProvider = ({ children }) => {
   const [company, setCompany] = useState([]);
   // selected compnies
   const [companies, setCompanies] = useState([]);
+  // data type separate
+  const [dateType, setDateType] = useState([]);
   // qc by defaut it will be null
   const [qc1, setQc1] = useState(null);
   // dates
@@ -18,6 +20,12 @@ const ContextProvider = ({ children }) => {
   const [dateNow, setDateNow] = useState(null);
   // dates end
   const [showTableData, setShowTableData] = useState(false);
+  //languages
+  const [language, setLanguage] = useState([]);
+  // selecting continent
+  const [continent, setContinent] = useState("");
+  // basis onn the selection of the continent showing th country
+  const [country, setCountry] = useState([]);
 
   const fetchCompanyData = async () => {
     try {
@@ -53,6 +61,14 @@ const ContextProvider = ({ children }) => {
         setQc1,
         showTableData,
         setShowTableData,
+        dateType,
+        setDateType,
+        language,
+        setLanguage,
+        continent,
+        setContinent,
+        country,
+        setCountry,
       }}
     >
       {children}

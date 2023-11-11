@@ -10,10 +10,23 @@ const theme = createTheme({
     },
   },
   components: {
-    MuiInput: {
+    MuiInputLabel: {
       root: {
         "&.Mui-focused": {
-          borderColor: "#808080",
+          color: "#808080",
+        },
+      },
+    },
+    MuiInput: {
+      underline: {
+        "&:before": {
+          borderBottomColor: "#808080",
+        },
+        "&:hover:not(.Mui-disabled):before": {
+          borderBottomColor: "#808080",
+        },
+        "&.Mui-focused:after": {
+          borderBottomColor: "#808080",
         },
       },
     },

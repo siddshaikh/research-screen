@@ -1,20 +1,16 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Checkbox,
   FormControl,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
-  Table,
-  TableBody,
   TableCell,
-  TableContainer,
-  TableHead,
   TableRow,
   TextField,
   Typography,
+  Tooltip,
 } from "@mui/material";
 import { Container } from "@mui/system";
 import axios from "axios";
@@ -30,8 +26,8 @@ const CompanyData = () => {
     companies,
     company,
     showTableData,
+    dateType,
   } = useContext(ResearchContext);
-
   // state variables
   const [tableData, setTableData] = useState([]);
   const [error, setError] = useState("");
@@ -46,14 +42,29 @@ const CompanyData = () => {
   // Function to fetch table data
   // updatedrows
   const [updatedRows, setUpadatedRows] = useState([]);
+  // saved success
+  const [savedSuccess, setSavedSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  // showing tooltip when hover the table cell
+  const [hoveredCellData, setHoveredCellData] = useState(null);
+  // sotrting
+  const [sortDirection, setSortDirection] = useState("asc");
+  const [sortColumn, setSortColumn] = useState("");
+
+  // fetching data basis on the client and company selection
   const fetchTableData = async () => {
     try {
       const request_data = {
         client_id: clientId,
         company_id: companyId,
+        date_type: dateType,
         qc1by: qc1,
         from_datetime: fromDate,
         to_datetime: dateNow,
+        // search_text: "",
+        // continent: "",
+        // country: "",
+        // language: "",
       };
 
       const url = "http://51.68.220.77:8000/listArticlebyQC/";
@@ -63,6 +74,7 @@ const CompanyData = () => {
           "Content-Type": "application/json",
         },
       });
+      console.log(response);
       if (response) {
         setTableData(response.data.feed_data);
         const localeV = response.data.feed_data;
@@ -102,13 +114,13 @@ const CompanyData = () => {
   useEffect(() => {
     const companyIds = getCompanyId(company, companies);
     companyIds
-      ? setCompanyId(companyIds.map((item) => `'${item}'`).join(","))
+      ? setCompanyId(companyIds?.map((item) => `'${item}'`).join(","))
       : setCompanyId([]);
   }, [companies, company]);
   // effect for the setting data for the editing row data basis on dropdown selection
   useEffect(() => {
     const editRowValues = selectedRowData
-      .map((item) => item[editRow])
+      ?.map((item) => item[editRow])
       .filter((value) => value !== undefined);
     setEditValue(editRowValues ? editRowValues.join(" ") : "");
   }, [selectedRowData, editRow]);
@@ -131,73 +143,107 @@ const CompanyData = () => {
   };
 
   const handleApplyChanges = () => {
-    // Check if any rows are selected
     if (selectedRowData.length > 0) {
-      const updatedRowsData = selectedRowData.map((selectedRow) => {
-        const rowIndex = tableData.findIndex((row) => row === selectedRow);
-
-        if (rowIndex !== -1) {
-          return {
-            ...selectedRow,
-            [editRow]: editValue,
-          };
-        }
-
-        return null;
+      setTableData((prevTableData) => {
+        return prevTableData?.map((row) => {
+          if (selectedRowData.includes(row)) {
+            // Update only the selected rows
+            return {
+              ...row,
+              [editRow]: editValue,
+            };
+          }
+          return row;
+        });
       });
 
+      // Update the updatedRows state
       setUpadatedRows((prevUpdatedRows) => [
         ...prevUpdatedRows,
-        ...updatedRowsData,
+        ...selectedRowData?.map((selectedRow) => ({
+          ...selectedRow,
+          [editRow]: editValue,
+        })),
       ]);
-
-      setTableData((prevTableData) => {
-        const updatedTableData = [...prevTableData];
-
-        // Loop through selected rows and update the "editrow" field
-        updatedRowsData.forEach((updatedRow) => {
-          const rowIndex = updatedTableData.findIndex(
-            (row) => row === updatedRow
-          );
-
-          if (rowIndex !== -1) {
-            updatedTableData[rowIndex] = updatedRow;
-          }
-        });
-
-        return updatedTableData;
-      });
     }
   };
 
-  const handleSort = () => {
+  const handleSort = (clickedHeader) => {
+    if (sortColumn === clickedHeader) {
+      // Toggle sort direction if the same column is clicked
+      setSortDirection((prevSortDirection) =>
+        prevSortDirection === "asc" ? "desc" : "asc"
+      );
+    } else {
+      // Set the new column to sort and reset the direction to ascending
+      setSortColumn(clickedHeader);
+      setSortDirection("asc");
+    }
+  };
+  const applySort = () => {
     const sortedData = [...tableData];
     sortedData.sort((a, b) => {
-      const authorNameA = (a.publication || "").toLowerCase();
-      const authorNameB = (b.publication || "").toLowerCase();
-      return authorNameA.localeCompare(authorNameB);
+      const valueA = (a[sortColumn] || "").toLowerCase();
+      const valueB = (b[sortColumn] || "").toLowerCase();
+      const comparison = valueA.localeCompare(valueB);
+
+      return sortDirection === "asc" ? comparison : -comparison;
     });
     setTableData(sortedData);
   };
+
+  useEffect(() => {
+    applySort();
+  }, [sortColumn, sortDirection]);
   const handlePostData = async () => {
-    const dt = updatedRows.map((row) => {
-      return {
-        // "SOCIALFEEDID": 18150502887,
-        // "COMPANYID": "ARC", this two columns are mandatory  and 1 or more         "KEYWORD": "Updated Keyword 1",
-        // "REPORTINGTONE": 2,
-        // "REPORTINGSUBJECT": "Updated Reporting Subject 1",
-        // "SUBCATEGORY": "Updated Subcategory 1",
-        // "PROMINENCE": 1.6,
-        // "DETAILSUMMARY": "Updated Detail Summary 1"
-      };
-    });
-    console.log(dt);
+    const data =
+      updatedRows.length > 0 &&
+      updatedRows?.map((row) => ({
+        social_feed_id: row.social_feed_id,
+        company_id: row.company_id,
+        reporting_tone: row.reporting_tone,
+        reporting_subject: row.reporting_subject,
+        subcategory: row.subcategory,
+        prominence: row.prominence,
+        detail_summary: row.detail_summary,
+      }));
+
     try {
       const url = "http://51.68.220.77:8000/update2database/";
-      await axios.post(url, {});
+      if (data.length > 0) {
+        await axios.post(url, data, {
+          headers: { "Content-Type": "application/json" },
+        });
+        setUpadatedRows([]);
+        setSavedSuccess(true);
+        setSuccessMessage("Data Saved Successfully!");
+        setSelectedRowData([]);
+      } else {
+        setSuccessMessage("No data to save.");
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error while saving data:", error);
     }
+  };
+  // showing success or failure message for the limited time
+  useEffect(() => {
+    if (savedSuccess) {
+      const timeoutId = setTimeout(() => {
+        setSavedSuccess(false);
+      }, 3000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [savedSuccess]);
+
+  //showing cell data when hover on the cell
+
+  const handleCellHover = (data) => {
+    setHoveredCellData(data);
+  };
+
+  const handleCellLeave = () => {
+    setHoveredCellData(null);
   };
   const renderTableData = () => {
     return showTableData ? (
@@ -210,18 +256,22 @@ const CompanyData = () => {
                 onChange={() => handleRowSelect(rowData)}
               />
             </TableCell>
-            {tableHeaders.map((header, index) => (
-              <TableCell
+            {tableHeaders?.map((header) => (
+              <Tooltip
                 key={header}
-                style={{
-                  backgroundColor: index % 2 === 1 ? "lightgray" : "white",
-                  maxHeight: "50px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
+                title={rowData[header]}
+                placement="top"
+                enterDelay={500}
+                leaveDelay={200}
               >
-                {rowData[header]}
-              </TableCell>
+                <TableCell
+                  className="table-cell"
+                  onMouseEnter={() => handleCellHover(rowData[header])}
+                  onMouseLeave={handleCellLeave}
+                >
+                  <div className="h-14 overflow-hidden">{rowData[header]}</div>
+                </TableCell>
+              </Tooltip>
             ))}
           </TableRow>
         ))
@@ -231,9 +281,22 @@ const CompanyData = () => {
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div
+      style={{
+        position: "relative",
+        width: "100vw",
+        overflowX: "scroll",
+      }}
+    >
       {/* filters for editing the cells */}
+      <Container>
+        {savedSuccess && (
+          <Typography sx={{ color: "green" }}>{successMessage}</Typography>
+        )}
+      </Container>
       <Container sx={{ display: "flex", justifyContent: "center", gap: 3 }}>
+        {/* saved or not */}
+
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel>Select Row</InputLabel>
           <Select
@@ -255,16 +318,13 @@ const CompanyData = () => {
         <Button variant="outlined" onClick={handleApplyChanges}>
           Apply
         </Button>
-        <Button variant="contained">Save</Button>
+        <Button variant="contained" onClick={handlePostData}>
+          Save
+        </Button>
       </Container>
-      {/* sort Functionality */}
-      <Container sx={{ width: "100%", textAlign: "right" }}>
-        <span className="font-bold cursor-pointer" onClick={handleSort}>
-          Sort A to Z
-        </span>
-      </Container>
+
       {/* main table */}
-      <div>
+      <div className="mt-4">
         <table>
           <thead>
             <tr className="sticky top-0 bg-slate-400">
@@ -278,8 +338,14 @@ const CompanyData = () => {
               )}
 
               {showTableData &&
-                tableHeaders.map((headers) => (
-                  <TableCell key={headers}>{headers}</TableCell>
+                tableHeaders?.map((headers) => (
+                  <TableCell
+                    key={headers}
+                    onClick={() => handleSort(headers)}
+                    sx={{ cursor: "pointer" }}
+                  >
+                    {headers}
+                  </TableCell>
                 ))}
             </tr>
           </thead>

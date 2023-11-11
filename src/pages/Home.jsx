@@ -5,17 +5,10 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import { Button, Divider, ListItemText, TextField } from "@mui/material";
 import {
-  Button,
-  Checkbox,
-  Divider,
-  ListItemText,
-  TextField,
-} from "@mui/material";
-import {
-  dataTypes,
+  dateTypes,
   qc1Array,
-  spokenLanguages,
   continents,
   countriesByContinent,
 } from "../global/dataArray";
@@ -47,17 +40,9 @@ function getStyles(name, clientName, theme) {
 const Home = () => {
   const theme = useTheme();
   const [clientName, setClientName] = useState([]);
-  // clientId for the fetching company
-  // const [clientId, setClientId] = useState("");
+  //languages from getting an api
+  const [languages, setLanguages] = useState([]);
 
-  // data type separate
-  const [dataType, setDataType] = useState([]);
-
-  const [language, setLanguage] = useState("");
-  // selecting continent
-  const [continent, setContinent] = useState([]);
-  // basis onn the selection of the continent showing th country
-  const [country, setCountry] = useState("");
   const [filteredCountries, setFilteredCountries] = useState([]);
   const navigate = useNavigate();
   const {
@@ -75,8 +60,16 @@ const Home = () => {
     qc1,
     setQc1,
     setShowTableData,
+    dateType,
+    setDateType,
+    language,
+    setLanguage,
+    continent,
+    setContinent,
+    country,
+    setCountry,
   } = useContext(ResearchContext);
-  console.log(companies);
+  // fetching the companies
   const fetchCompany = async () => {
     try {
       const result =
@@ -96,6 +89,22 @@ const Home = () => {
       fetchCompany();
     }
   }, [clientId]);
+  //  fetching langueges
+  const fetchLanguage = async () => {
+    try {
+      const response = await axios.get(
+        "http://51.68.220.77:8000/languagelist/"
+      );
+      if (response) {
+        setLanguages(response.data.languages);
+      }
+    } catch (error) {
+      console.error("Error fetching languages:", error);
+    }
+  };
+  useEffect(() => {
+    fetchLanguage();
+  }, [language]);
   const handleChange = (event) => {
     const {
       target: { value },
@@ -120,11 +129,11 @@ const Home = () => {
     } = event;
     setCompanies(value);
   };
-  const handleDataTypeChange = (event) => {
+  const handleDateTypeChange = (event) => {
     const {
       target: { value },
     } = event;
-    setDataType(typeof value === "string" ? value.split(",") : value);
+    setDateType(typeof value === "string" ? value.split(",") : value);
   };
   const handleQc1 = (event) => {
     const {
@@ -201,7 +210,7 @@ const Home = () => {
           multiple
           value={companies}
           onChange={handleSelectedCompanies}
-          input={<OutlinedInput label="Tag" />}
+          input={<OutlinedInput label="Name" />}
           renderValue={(selected) => selected.join(", ")}
           MenuProps={MenuProps}
         >
@@ -216,25 +225,25 @@ const Home = () => {
             ))}
         </Select>
       </FormControl>
-      {/* Datatype */}
+
+      {/* Dataetype */}
       <FormControl sx={{ m: 1, width: 300 }}>
-        <InputLabel id="demo-mutiple-chip-label">Datatypes</InputLabel>
+        <InputLabel id="demo-mutiple-chip-label">Datetype</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
-          id="demo-multiple-checkbox"
-          value={dataType}
-          onChange={handleDataTypeChange}
+          value={dateType}
+          onChange={handleDateTypeChange}
           input={<OutlinedInput label="Tag" />}
           renderValue={(selected) => selected.join(", ")}
           MenuProps={MenuProps}
         >
-          {dataTypes.map((dataType) => (
+          {dateTypes.map((dateType) => (
             <MenuItem
-              key={dataType}
-              value={dataType}
-              style={getStyles(dataType, dataType, theme)}
+              key={dateType}
+              value={dateType}
+              style={getStyles(dateType, dateType, theme)}
             >
-              {dataType}
+              {dateType}
             </MenuItem>
           ))}
         </Select>
@@ -271,11 +280,7 @@ const Home = () => {
           MenuProps={MenuProps}
         >
           {qc1Array.map((option) => (
-            <MenuItem
-              key={option}
-              value={option}
-              style={getStyles(dataType, dataType, theme)}
-            >
+            <MenuItem key={option} value={option}>
               {option}
             </MenuItem>
           ))}
@@ -292,16 +297,13 @@ const Home = () => {
           id="languages"
           value={language}
           onChange={handleLanguageChange}
-          input={<OutlinedInput label="Tag" />}
+          input={<OutlinedInput label="Name" />}
           MenuProps={MenuProps}
+          multiple
         >
-          {spokenLanguages.map((lang) => (
-            <MenuItem
-              key={lang.name}
-              value={lang.name}
-              style={getStyles(dataType, dataType, theme)}
-            >
-              {lang.code} {lang.name}
+          {Object.entries(languages).map(([languagename, languagecode]) => (
+            <MenuItem key={languagecode} value={languagecode}>
+              {languagename}
             </MenuItem>
           ))}
         </Select>
@@ -313,16 +315,12 @@ const Home = () => {
           id="continents"
           value={continent}
           onChange={handleContinentChange}
-          input={<OutlinedInput label="Tag" />}
+          input={<OutlinedInput label="Name" />}
           renderValue={(selected) => selected.join(", ")}
           MenuProps={MenuProps}
         >
           {continents.map((continent) => (
-            <MenuItem
-              key={continent}
-              value={continent}
-              style={getStyles(dataType, dataType, theme)}
-            >
+            <MenuItem key={continent} value={continent}>
               {continent}
             </MenuItem>
           ))}
@@ -335,15 +333,12 @@ const Home = () => {
           id="countries"
           value={country}
           onChange={(e) => setCountry(e.target.value)}
-          input={<OutlinedInput label="Tag" />}
+          input={<OutlinedInput label="Name" />}
           MenuProps={MenuProps}
+          multiple
         >
           {filteredCountries.map((country) => (
-            <MenuItem
-              key={country}
-              value={country}
-              style={getStyles(dataType, dataType, theme)}
-            >
+            <MenuItem key={country} value={country}>
               {country}
             </MenuItem>
           ))}
