@@ -37,7 +37,6 @@ function Login() {
         loginname: name,
         password: password,
       });
-      console.log(res);
       if (res.status === 200) {
         localStorage.setItem("user", generateToken());
         setUserToken(localStorage.getItem("user"));

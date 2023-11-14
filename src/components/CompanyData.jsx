@@ -27,6 +27,9 @@ const CompanyData = () => {
     company,
     showTableData,
     dateType,
+    continent,
+    country,
+    language,
   } = useContext(ResearchContext);
   // state variables
   const [tableData, setTableData] = useState([]);
@@ -62,9 +65,9 @@ const CompanyData = () => {
         from_datetime: fromDate,
         to_datetime: dateNow,
         // search_text: "",
-        // continent: "",
-        // country: "",
-        // language: "",
+        // continent: continent,
+        // country: country,
+        // language: language,
       };
 
       const url = "http://51.68.220.77:8000/listArticlebyQC/";
@@ -74,7 +77,6 @@ const CompanyData = () => {
           "Content-Type": "application/json",
         },
       });
-      console.log(response);
       if (response) {
         setTableData(response.data.feed_data);
         const localeV = response.data.feed_data;
@@ -284,8 +286,6 @@ const CompanyData = () => {
     <div
       style={{
         position: "relative",
-        width: "100vw",
-        overflowX: "scroll",
       }}
     >
       {/* filters for editing the cells */}
