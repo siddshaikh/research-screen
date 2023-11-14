@@ -195,18 +195,31 @@ const Home = () => {
   };
   return (
     <div>
-      {/* title */}
-      <h2 className="text-center mb-4 font-bold text-lg uppercase">
-        Research Screen
-      </h2>
+      <div className="flex items-center justify-evenly">
+        {/* title */}
+        <h2 className="text-center mb-4 font-bold text-lg uppercase">
+          Research Screen
+        </h2>
+        {/* logout */}
+        <Button
+          variant="contained"
+          onClick={handleLogout}
+          sx={{ width: "25px", fontSize: "0.7em" }}
+        >
+          Logout
+        </Button>
+      </div>
+      <Divider variant="middle" sx={{ m: 2 }} />
       {/* Category dropdowns filter out */}
       {/* client */}
       {isLoading ? (
         <Loader />
       ) : (
         <>
-          <FormControl sx={{ m: 1, width: 300 }}>
-            <InputLabel id="demo-multiple-name-label">Client</InputLabel>
+          <FormControl sx={{ m: 1, width: 200 }} className="text-sm">
+            <InputLabel id="demo-multiple-name-label" className="text-sm">
+              Client
+            </InputLabel>
             <Select
               labelId="demo-multiple-name-label"
               id="demo-multiple-name"
@@ -228,7 +241,7 @@ const Home = () => {
             </Select>
           </FormControl>
           {/* comapany */}
-          <FormControl sx={{ m: 1, width: 300 }}>
+          <FormControl sx={{ m: 1, width: 200 }}>
             <InputLabel id="demo-multiple-checkbox-label">Company</InputLabel>
             <Select
               labelId="demo-multiple-checkbox-label"
@@ -253,7 +266,7 @@ const Home = () => {
           </FormControl>
 
           {/* Dataetype */}
-          <FormControl sx={{ m: 1, width: 300 }}>
+          <FormControl sx={{ m: 1, width: 200, height: "30px" }}>
             <InputLabel id="demo-mutiple-chip-label">Datetype</InputLabel>
             <Select
               labelId="demo-multiple-checkbox-label"
@@ -315,6 +328,10 @@ const Home = () => {
           {/* users */}
           <FormControl sx={{ m: 1, width: 200 }}>
             <InputLabel id="users-select-label">Users</InputLabel>
+            <Select input={<OutlinedInput label="tag" />}>
+              <MenuItem>Null</MenuItem>
+              <MenuItem>Null</MenuItem>
+            </Select>
           </FormControl>
           {/* languages */}
           <FormControl sx={{ m: 1, width: 200 }}>
@@ -373,17 +390,18 @@ const Home = () => {
           {/* search Button */}
           <Button
             onClick={handleSearch}
-            variant="contained"
-            sx={{ m: 1, width: 100, height: 50 }}
+            variant="contain"
+            sx={{
+              m: 1,
+              width: 100,
+              height: 50,
+              bgcolor: "gray",
+              color: "white",
+            }}
           >
             Search
           </Button>
-          {/* logout */}
-          <div className="text-right mr-4">
-            <Button variant="contained" onClick={handleLogout}>
-              Logout
-            </Button>
-          </div>
+
           {/* divider */}
           <Divider variant="middle" sx={{ m: 2 }} />
           {/* table */}

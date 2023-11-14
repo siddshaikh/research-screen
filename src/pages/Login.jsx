@@ -28,9 +28,6 @@ function Login() {
   const navigate = useNavigate();
   const { setUserToken } = useContext(ResearchContext);
 
-  const generateToken = () => {
-    return Math.random().toString(36).substring(7) + Date.now().toString(36);
-  };
   const authenticateUser = async () => {
     try {
       const res = await axios.post("http://51.68.220.77:8000/authenticate/", {
@@ -38,7 +35,7 @@ function Login() {
         password: password,
       });
       if (res.status === 200) {
-        localStorage.setItem("user", generateToken());
+        localStorage.setItem("user", res.data.access_token);
         setUserToken(localStorage.getItem("user"));
         navigate("/");
       }

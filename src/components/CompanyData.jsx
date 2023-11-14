@@ -19,6 +19,7 @@ import { ResearchContext } from "../global/context/ContextProvider";
 const CompanyData = () => {
   // context values
   const {
+    userToken,
     clientId,
     qc1,
     fromDate,
@@ -75,12 +76,17 @@ const CompanyData = () => {
       const response = await axios.post(url, request_data, {
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + userToken,
         },
       });
       if (response) {
         setTableData(response.data.feed_data);
         const localeV = response.data.feed_data;
-        setTableHeaders(Object.keys(localeV[0]));
+        setTableHeaders(
+          Object.keys(localeV[0]).map((header) =>
+            header.toUpperCase().replace(/_/g, " ")
+          )
+        );
       }
     } catch (err) {
       setError(err.message);
@@ -171,13 +177,12 @@ const CompanyData = () => {
   };
 
   const handleSort = (clickedHeader) => {
-    if (sortColumn === clickedHeader) {
+    if (sortColumn === clickedHeader.toLowerCase().replace(/ /g, "_")) {
       // Toggle sort direction if the same column is clicked
       setSortDirection((prevSortDirection) =>
         prevSortDirection === "asc" ? "desc" : "asc"
       );
     } else {
-      // Set the new column to sort and reset the direction to ascending
       setSortColumn(clickedHeader);
       setSortDirection("asc");
     }
@@ -185,18 +190,28 @@ const CompanyData = () => {
   const applySort = () => {
     const sortedData = [...tableData];
     sortedData.sort((a, b) => {
-      const valueA = (a[sortColumn] || "").toLowerCase();
-      const valueB = (b[sortColumn] || "").toLowerCase();
-      const comparison = valueA.localeCompare(valueB);
+      const valueA = a[sortColumn];
+      const valueB = b[sortColumn];
 
-      return sortDirection === "asc" ? comparison : -comparison;
+      console.log("Sorting:", valueA, valueB);
+
+      if (typeof valueA === "string" && typeof valueB === "string") {
+        // String comparison
+        return sortDirection === "asc"
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA);
+      } else {
+        // Numeric comparison
+        return sortDirection === "asc" ? valueA - valueB : valueB - valueA;
+      }
     });
+
     setTableData(sortedData);
   };
 
   useEffect(() => {
     applySort();
-  }, [sortColumn, sortDirection]);
+  }, []);
   const handlePostData = async () => {
     const data =
       updatedRows.length > 0 &&
@@ -268,10 +283,16 @@ const CompanyData = () => {
               >
                 <TableCell
                   className="table-cell"
-                  onMouseEnter={() => handleCellHover(rowData[header])}
+                  onMouseEnter={() =>
+                    handleCellHover(
+                      rowData[header.toLowerCase().replace(/ /g, "_")]
+                    )
+                  }
                   onMouseLeave={handleCellLeave}
                 >
-                  <div className="h-14 overflow-hidden">{rowData[header]}</div>
+                  <div className="h-14 overflow-hidden">
+                    {rowData[header.toLowerCase().replace(/ /g, "_")]}
+                  </div>
                 </TableCell>
               </Tooltip>
             ))}
@@ -329,26 +350,27 @@ const CompanyData = () => {
           <thead>
             <tr className="sticky top-0 bg-slate-400">
               {showTableData && (
-                <tr>
+                <TableCell>
                   <Checkbox
                     checked={selectedRowData.length === tableData.length}
                     onChange={handleMasterCheckboxChange}
                   />
-                </tr>
+                </TableCell>
               )}
 
               {showTableData &&
-                tableHeaders?.map((headers) => (
+                tableHeaders?.map((header) => (
                   <TableCell
-                    key={headers}
-                    onClick={() => handleSort(headers)}
+                    key={header}
+                    onClick={() => handleSort(header)}
                     sx={{ cursor: "pointer" }}
                   >
-                    {headers}
+                    {header}
                   </TableCell>
                 ))}
             </tr>
           </thead>
+
           <tbody>{renderTableData()}</tbody>
         </table>
       </div>

@@ -1,16 +1,35 @@
 import axios from "axios";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useContext } from "react";
+import { ResearchContext } from "../global/context/ContextProvider";
 
 const useFetchData = (url, options = {}) => {
+  const { userToken } = useContext(ResearchContext);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const memoizedOptions = useMemo(() => options, [options]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(url, memoizedOptions);
+        const headers = {
+          "Content-Type": "application/json",
+        };
+
+        if (options.headers) {
+          Object.assign(headers, options.headers);
+        }
+
+        if (userToken) {
+          headers.Authorization = `Bearer ${userToken}`;
+        }
+
+        const axiosConfig = {
+          headers,
+        };
+
+        const res = await axios.get(url, axiosConfig);
         setData(res);
       } catch (error) {
         setError(error.message || "An error occurred");
