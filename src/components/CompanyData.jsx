@@ -53,7 +53,6 @@ const CompanyData = () => {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   // showing tooltip when hover the table cell
-  const [hoveredCellData, setHoveredCellData] = useState(null);
   // sotrting
   const [sortDirection, setSortDirection] = useState("asc");
   const [sortColumn, setSortColumn] = useState("");
@@ -99,7 +98,7 @@ const CompanyData = () => {
 
   useEffect(() => {
     fetchTableData();
-  }, [companyId, company]);
+  }, [companies, companyId, company, dateType, qc1, fromDate, dateNow]);
 
   // Function to find company id based on selection
   const getCompanyId = (companyData, companyNames) => {
@@ -186,6 +185,7 @@ const CompanyData = () => {
         prevSortDirection === "asc" ? "desc" : "asc"
       );
     } else {
+      // Set the new column to sort and reset the direction to ascending
       setSortColumn(clickedHeader);
       setSortDirection("asc");
     }
@@ -193,28 +193,18 @@ const CompanyData = () => {
   const applySort = () => {
     const sortedData = [...tableData];
     sortedData.sort((a, b) => {
-      const valueA = a[sortColumn];
-      const valueB = b[sortColumn];
+      const valueA = (a[sortColumn] || "").toLowerCase();
+      const valueB = (b[sortColumn] || "").toLowerCase();
+      const comparison = valueA.localeCompare(valueB);
 
-      console.log("Sorting:", valueA, valueB);
-
-      if (typeof valueA === "string" && typeof valueB === "string") {
-        // String comparison
-        return sortDirection === "asc"
-          ? valueA.localeCompare(valueB)
-          : valueB.localeCompare(valueA);
-      } else {
-        // Numeric comparison
-        return sortDirection === "asc" ? valueA - valueB : valueB - valueA;
-      }
+      return sortDirection === "asc" ? comparison : -comparison;
     });
-
     setTableData(sortedData);
   };
 
   useEffect(() => {
     applySort();
-  }, []);
+  }, [sortColumn, sortDirection]);
 
   // handle Search Table Values
   const handleSearch = () => {
@@ -274,41 +264,30 @@ const CompanyData = () => {
     }
   }, [savedSuccess]);
 
-  //showing cell data when hover on the cell
-
-  const handleCellHover = (data) => {
-    setHoveredCellData(data);
-  };
-
-  const handleCellLeave = () => {
-    setHoveredCellData(null);
-  };
-
   const renderTableData = () => {
     const dataToRender = searchedData.length > 0 ? searchedData : tableData;
 
     return showTableData ? (
       dataToRender.map((rowData, rowIndex) => (
         <TableRow key={rowIndex}>
-          <TableCell>
-            <Checkbox
-              checked={selectedRowData.includes(rowData)}
-              onChange={() => handleRowSelect(rowData)}
-            />
-          </TableCell>
+          {tableHeaders && (
+            <TableCell>
+              <Checkbox
+                checked={selectedRowData.includes(rowData)}
+                onChange={() => handleRowSelect(rowData)}
+              />
+            </TableCell>
+          )}
+
           {tableHeaders?.map((header) => (
             <Tooltip
               key={header}
-              title={rowData[header]}
+              title={rowData[header.toLowerCase().replace(/ /g, "_")]}
               placement="top"
               enterDelay={500}
               leaveDelay={200}
             >
-              <TableCell
-                className="table-cell"
-                onMouseEnter={() => handleCellHover(rowData[header])}
-                onMouseLeave={handleCellLeave}
-              >
+              <TableCell className="table-cell">
                 <div className="h-14 overflow-hidden">
                   {rowData[header.toLowerCase().replace(/ /g, "_")]}
                 </div>
@@ -386,7 +365,9 @@ const CompanyData = () => {
                 tableHeaders?.map((header) => (
                   <TableCell
                     key={header}
-                    onClick={() => handleSort(header)}
+                    onClick={() =>
+                      handleSort(header.toLowerCase().replace(/ /g, "_"))
+                    }
                     sx={{ cursor: "pointer" }}
                   >
                     {header}
