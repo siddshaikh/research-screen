@@ -41,6 +41,9 @@ const CompanyData = () => {
   const [editRow, setEditRow] = useState("");
   // selectedRowData
   const [selectedRowData, setSelectedRowData] = useState([]);
+  // search values from the table
+  const [searchValue, setSearchValue] = useState("");
+  const [searchedData, setSearchedData] = useState([]);
   // data for the edit
   const [editValue, setEditValue] = useState("");
   // Function to fetch table data
@@ -124,7 +127,7 @@ const CompanyData = () => {
     companyIds
       ? setCompanyId(companyIds?.map((item) => `'${item}'`).join(","))
       : setCompanyId([]);
-  }, [companies, company]);
+  }, [companies, company, companyId]);
   // effect for the setting data for the editing row data basis on dropdown selection
   useEffect(() => {
     const editRowValues = selectedRowData
@@ -177,7 +180,7 @@ const CompanyData = () => {
   };
 
   const handleSort = (clickedHeader) => {
-    if (sortColumn === clickedHeader.toLowerCase().replace(/ /g, "_")) {
+    if (sortColumn === clickedHeader) {
       // Toggle sort direction if the same column is clicked
       setSortDirection((prevSortDirection) =>
         prevSortDirection === "asc" ? "desc" : "asc"
@@ -212,6 +215,21 @@ const CompanyData = () => {
   useEffect(() => {
     applySort();
   }, []);
+
+  // handle Search Table Values
+  const handleSearch = () => {
+    const output =
+      tableData &&
+      tableData.filter((items) =>
+        items.company_name.toLowerCase().includes(searchValue.toLowerCase())
+      );
+    setSearchedData(output && output);
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchValue]);
+
   const handlePostData = async () => {
     const data =
       updatedRows.length > 0 &&
@@ -229,7 +247,10 @@ const CompanyData = () => {
       const url = "http://51.68.220.77:8000/update2database/";
       if (data.length > 0) {
         await axios.post(url, data, {
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + userToken,
+          },
         });
         setUpadatedRows([]);
         setSavedSuccess(true);
@@ -262,42 +283,40 @@ const CompanyData = () => {
   const handleCellLeave = () => {
     setHoveredCellData(null);
   };
+
   const renderTableData = () => {
+    const dataToRender = searchedData.length > 0 ? searchedData : tableData;
+
     return showTableData ? (
-      tableData.length > 0 &&
-        tableData.map((rowData, rowIndex) => (
-          <TableRow key={rowIndex}>
-            <TableCell>
-              <Checkbox
-                checked={selectedRowData.includes(rowData)}
-                onChange={() => handleRowSelect(rowData)}
-              />
-            </TableCell>
-            {tableHeaders?.map((header) => (
-              <Tooltip
-                key={header}
-                title={rowData[header]}
-                placement="top"
-                enterDelay={500}
-                leaveDelay={200}
+      dataToRender.map((rowData, rowIndex) => (
+        <TableRow key={rowIndex}>
+          <TableCell>
+            <Checkbox
+              checked={selectedRowData.includes(rowData)}
+              onChange={() => handleRowSelect(rowData)}
+            />
+          </TableCell>
+          {tableHeaders?.map((header) => (
+            <Tooltip
+              key={header}
+              title={rowData[header]}
+              placement="top"
+              enterDelay={500}
+              leaveDelay={200}
+            >
+              <TableCell
+                className="table-cell"
+                onMouseEnter={() => handleCellHover(rowData[header])}
+                onMouseLeave={handleCellLeave}
               >
-                <TableCell
-                  className="table-cell"
-                  onMouseEnter={() =>
-                    handleCellHover(
-                      rowData[header.toLowerCase().replace(/ /g, "_")]
-                    )
-                  }
-                  onMouseLeave={handleCellLeave}
-                >
-                  <div className="h-14 overflow-hidden">
-                    {rowData[header.toLowerCase().replace(/ /g, "_")]}
-                  </div>
-                </TableCell>
-              </Tooltip>
-            ))}
-          </TableRow>
-        ))
+                <div className="h-14 overflow-hidden">
+                  {rowData[header.toLowerCase().replace(/ /g, "_")]}
+                </div>
+              </TableCell>
+            </Tooltip>
+          ))}
+        </TableRow>
+      ))
     ) : (
       <p className="text-red-500 w-screen text-center">No data found.</p>
     );
@@ -317,7 +336,12 @@ const CompanyData = () => {
       </Container>
       <Container sx={{ display: "flex", justifyContent: "center", gap: 3 }}>
         {/* saved or not */}
-
+        {/* searchfield for the searching tableData */}
+        <TextField
+          label="Company Name"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel>Select Row</InputLabel>
           <Select

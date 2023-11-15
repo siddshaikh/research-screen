@@ -61,6 +61,8 @@ const Home = () => {
     setDateNow,
     qc1,
     setQc1,
+    qc2,
+    setQc2,
     setShowTableData,
     dateType,
     setDateType,
@@ -95,8 +97,8 @@ const Home = () => {
   );
 
   useEffect(() => {
-    if (clientId || companyData?.data) {
-      setCompany(companyData.data.companies);
+    if (clientId || companyData.data) {
+      setCompany(companyData?.data?.companies || []);
       setCompanies([]);
       setShowTableData(false);
     } else {
@@ -149,7 +151,7 @@ const Home = () => {
     const {
       target: { value },
     } = event;
-    setCompanies(value);
+    setCompanies(value ? value : "");
   };
   const handleDateTypeChange = (event) => {
     const {
@@ -162,6 +164,12 @@ const Home = () => {
       target: { value },
     } = event;
     setQc1(typeof value === "string" ? value.split(", ") : value);
+  };
+  const handleQc2 = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setQc2(value);
   };
   const handleLanguageChange = (event) => {
     setLanguage(event.target.value);
@@ -183,11 +191,7 @@ const Home = () => {
     setFilteredCountries(selectedCountries);
   };
   const handleSearch = () => {
-    setShowTableData(
-      (companies && companies.length === 1) || companies.length > 1
-        ? true
-        : false
-    );
+    setShowTableData(companies ? true : false);
   };
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -247,7 +251,7 @@ const Home = () => {
               labelId="demo-multiple-checkbox-label"
               id="demo-multiple-checkbox"
               multiple
-              value={companies}
+              value={companies && companies}
               onChange={handleSelectedCompanies}
               input={<OutlinedInput label="Name" />}
               renderValue={(selected) => selected.join(", ")}
@@ -316,6 +320,23 @@ const Home = () => {
               onChange={handleQc1}
               input={<OutlinedInput label="tag" />}
               renderValue={(selected) => selected.join(", ")}
+              MenuProps={MenuProps}
+            >
+              {qc1Array.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {/* qc2 */}
+          <FormControl sx={{ m: 1, width: 200 }}>
+            <InputLabel id="qc1-select-label">QC2</InputLabel>
+            <Select
+              id="qc1-checks"
+              value={qc2}
+              onChange={handleQc2}
+              input={<OutlinedInput label="tag" />}
               MenuProps={MenuProps}
             >
               {qc1Array.map((option) => (

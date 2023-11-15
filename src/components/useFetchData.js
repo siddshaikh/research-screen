@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState, useMemo, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { ResearchContext } from "../global/context/ContextProvider";
 
 const useFetchData = (url, options = {}) => {
@@ -7,8 +7,6 @@ const useFetchData = (url, options = {}) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const memoizedOptions = useMemo(() => options, [options]);
 
   useEffect(() => {
     const fetchData = async () => {

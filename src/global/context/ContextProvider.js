@@ -13,6 +13,8 @@ const ContextProvider = ({ children }) => {
   const [dateType, setDateType] = useState([]);
   // qc by defaut it will be null
   const [qc1, setQc1] = useState(null);
+  // qc2
+  const [qc2, setQc2] = useState(null);
   // dates
   const [fromDate, setFromDate] = useState(null);
   const [dateNow, setDateNow] = useState(null);
@@ -42,6 +44,8 @@ const ContextProvider = ({ children }) => {
         setDateNow,
         qc1,
         setQc1,
+        qc2,
+        setQc2,
         showTableData,
         setShowTableData,
         dateType,
