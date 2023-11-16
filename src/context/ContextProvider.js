@@ -26,6 +26,8 @@ const ContextProvider = ({ children }) => {
   const [continent, setContinent] = useState("");
   // basis onn the selection of the continent showing th country
   const [country, setCountry] = useState([]);
+  //companyID for getting an a tableData
+  const [companyId, setCompanyId] = useState([]);
 
   return (
     <ResearchContext.Provider
@@ -56,6 +58,8 @@ const ContextProvider = ({ children }) => {
         setContinent,
         country,
         setCountry,
+        companyId,
+        setCompanyId,
       }}
     >
       {children}

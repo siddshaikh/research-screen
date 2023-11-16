@@ -15,7 +15,7 @@ import {
 import CompanyData from "../components/CompanyData";
 import { useNavigate } from "react-router-dom";
 import { ResearchContext } from "../context/ContextProvider";
-import useFetchData from "../components/useFetchData";
+import useFetchData from "../hooks/useFetchData";
 import Loader from "../components/Loader";
 
 const ITEM_HEIGHT = 48;

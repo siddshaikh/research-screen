@@ -15,6 +15,7 @@ import {
 import { Container } from "@mui/system";
 import axios from "axios";
 import { ResearchContext } from "../context/ContextProvider";
+import { editRowValues } from "../global/dataArray";
 
 const CompanyData = () => {
   // context values
@@ -28,9 +29,12 @@ const CompanyData = () => {
     company,
     showTableData,
     dateType,
+    setShowTableData,
     continent,
     country,
     language,
+    // companyId,
+    // setCompanyId,
   } = useContext(ResearchContext);
   // state variables
   const [tableData, setTableData] = useState([]);
@@ -59,47 +63,48 @@ const CompanyData = () => {
 
   // fetching data basis on the client and company selection
   const fetchTableData = async () => {
-    try {
-      const request_data = {
-        client_id: clientId,
-        company_id: companyId,
-        date_type: dateType,
-        qc1by: qc1,
-        from_datetime: fromDate,
-        to_datetime: dateNow,
-        // search_text: "",
-        // continent: continent,
-        // country: country,
-        // language: language,
-      };
+    if (companies.length > 0) {
+      try {
+        const request_data = {
+          client_id: clientId,
+          company_id: companyId,
+          date_type: dateType,
+          qc1by: qc1,
+          from_datetime: fromDate,
+          to_datetime: dateNow,
+          // search_text: "",
+          // continent: continent,
+          // country: country,
+          // language: language,
+        };
 
-      const url = "http://51.68.220.77:8000/listArticlebyQC/";
+        const url = "http://51.68.220.77:8000/listArticlebyQC/";
 
-      const response = await axios.post(url, request_data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + userToken,
-        },
-      });
-      if (response) {
-        setTableData(response.data.feed_data);
-        const localeV = response.data.feed_data;
-        setTableHeaders(
-          Object.keys(localeV[0]).map((header) =>
-            header.toUpperCase().replace(/_/g, " ")
-          )
-        );
+        const response = await axios.post(url, request_data, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + userToken,
+          },
+        });
+        if (response) {
+          setTableData(response.data.feed_data);
+          const localeV = response.data.feed_data;
+          setTableHeaders(
+            Object.keys(localeV[0]).map((header) =>
+              header.toUpperCase().replace(/_/g, " ")
+            )
+          );
+        }
+      } catch (err) {
+        setError(err.message);
+        console.log(error);
       }
-    } catch (err) {
-      setError(err.message);
-      console.log(error);
     }
   };
 
   useEffect(() => {
     fetchTableData();
-  }, [companies, companyId, company, dateType, qc1, fromDate, dateNow]);
-
+  }, [clientId, companyId]);
   // Function to find company id based on selection
   const getCompanyId = (companyData, companyNames) => {
     let companyId = [];
@@ -193,12 +198,17 @@ const CompanyData = () => {
   const applySort = () => {
     const sortedData = [...tableData];
     sortedData.sort((a, b) => {
-      const valueA = (a[sortColumn] || "").toLowerCase();
-      const valueB = (b[sortColumn] || "").toLowerCase();
-      const comparison = valueA.localeCompare(valueB);
+      const valueA = (a[sortColumn] || "").toString().toLowerCase();
+      const valueB = (b[sortColumn] || "").toString().toLowerCase();
 
-      return sortDirection === "asc" ? comparison : -comparison;
+      if (!isNaN(valueA) && !isNaN(valueB)) {
+        return sortDirection === "asc" ? valueA - valueB : valueB - valueA;
+      } else {
+        const comparison = valueA.localeCompare(valueB);
+        return sortDirection === "asc" ? comparison : -comparison;
+      }
     });
+
     setTableData(sortedData);
   };
 
@@ -326,11 +336,11 @@ const CompanyData = () => {
             onChange={(e) => setEditRow(e.target.value)}
             label="Select Row"
           >
-            <MenuItem value={"reporting_tone"}>Reporting Tone</MenuItem>
-            <MenuItem value={"reporting_subject"}>Reporting Subject</MenuItem>
-            <MenuItem value={"subcategory"}>Sub Category</MenuItem>
-            <MenuItem value={"prominence"}>Prominence</MenuItem>
-            <MenuItem value={"detail_summary"}>Detail Summary</MenuItem>
+            {editRowValues.map((item) => (
+              <MenuItem value={item.value} key={item.id}>
+                {item.title}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <TextField
