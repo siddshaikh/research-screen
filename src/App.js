@@ -7,7 +7,7 @@ import theme from "./components/theme";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useContext, useEffect } from "react";
-import { ResearchContext } from "./global/context/ContextProvider";
+import { ResearchContext } from "./context/ContextProvider";
 import NotFound from "./components/NotFound";
 import { checkUserAuthenticate } from "./auth/auth";
 

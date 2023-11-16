@@ -14,7 +14,7 @@ import {
 } from "../global/dataArray";
 import CompanyData from "../components/CompanyData";
 import { useNavigate } from "react-router-dom";
-import { ResearchContext } from "../global/context/ContextProvider";
+import { ResearchContext } from "../context/ContextProvider";
 import useFetchData from "../components/useFetchData";
 import Loader from "../components/Loader";
 

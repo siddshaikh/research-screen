@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
-import { ResearchContext } from "../global/context/ContextProvider";
+import { ResearchContext } from "../context/ContextProvider";
 
 const useFetchData = (url, options = {}) => {
   const { userToken } = useContext(ResearchContext);

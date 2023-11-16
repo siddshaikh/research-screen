@@ -5,7 +5,7 @@ import { css } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { ResearchContext } from "../global/context/ContextProvider";
+import { ResearchContext } from "../context/ContextProvider";
 
 const loginFormStyles = css`
   display: flex;

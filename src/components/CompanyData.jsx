@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Container } from "@mui/system";
 import axios from "axios";
-import { ResearchContext } from "../global/context/ContextProvider";
+import { ResearchContext } from "../context/ContextProvider";
 
 const CompanyData = () => {
   // context values
@@ -267,17 +267,15 @@ const CompanyData = () => {
   const renderTableData = () => {
     const dataToRender = searchedData.length > 0 ? searchedData : tableData;
 
-    return showTableData ? (
+    return tableData.length && showTableData ? (
       dataToRender.map((rowData, rowIndex) => (
         <TableRow key={rowIndex}>
-          {tableHeaders && (
-            <TableCell>
-              <Checkbox
-                checked={selectedRowData.includes(rowData)}
-                onChange={() => handleRowSelect(rowData)}
-              />
-            </TableCell>
-          )}
+          <TableCell>
+            <Checkbox
+              checked={selectedRowData.includes(rowData)}
+              onChange={() => handleRowSelect(rowData)}
+            />
+          </TableCell>
 
           {tableHeaders?.map((header) => (
             <Tooltip
