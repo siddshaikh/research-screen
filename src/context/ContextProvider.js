@@ -16,8 +16,10 @@ const ContextProvider = ({ children }) => {
   // qc2
   const [qc2, setQc2] = useState(null);
   // dates
-  const [fromDate, setFromDate] = useState(null);
-  const [dateNow, setDateNow] = useState(null);
+  const [fromDate, setFromDate] = useState(
+    new Date().toISOString().slice(0, 16)
+  );
+  const [dateNow, setDateNow] = useState();
   // dates end
   const [showTableData, setShowTableData] = useState(false);
   //languages

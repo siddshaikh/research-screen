@@ -18,8 +18,9 @@ import { ResearchContext } from "../context/ContextProvider";
 import useFetchData from "../hooks/useFetchData";
 import Loader from "../components/Loader";
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
+const ITEM_HEIGHT = 32;
+const ITEM_PADDING_TOP = 4;
+
 const MenuProps = {
   PaperProps: {
     style: {
@@ -199,7 +200,7 @@ const Home = () => {
   };
   return (
     <div>
-      <div className="flex items-center justify-evenly">
+      <div className="flex items-center justify-between mx-4">
         {/* title */}
         <h2 className="text-center mb-4 font-bold text-lg uppercase">
           Research Screen
@@ -208,7 +209,7 @@ const Home = () => {
         <Button
           variant="contained"
           onClick={handleLogout}
-          sx={{ width: "25px", fontSize: "0.7em" }}
+          sx={{ height: 30, fontSize: "0.8em" }}
         >
           Logout
         </Button>
@@ -220,8 +221,11 @@ const Home = () => {
         <Loader />
       ) : (
         <>
-          <FormControl sx={{ m: 1, width: 200 }} className="text-sm">
-            <InputLabel id="demo-multiple-name-label" className="text-sm">
+          <FormControl sx={{ m: 1, width: 200 }}>
+            <InputLabel
+              id="demo-multiple-name-label"
+              sx={{ fontSize: "0.8rem", margin: "-7px" }}
+            >
               Client
             </InputLabel>
             <Select
@@ -231,6 +235,7 @@ const Home = () => {
               onChange={handleChange}
               input={<OutlinedInput label="Name" />}
               MenuProps={MenuProps}
+              sx={{ height: 30, fontSize: "0.8em" }}
             >
               {clients &&
                 clients.map((client) => (
@@ -246,7 +251,12 @@ const Home = () => {
           </FormControl>
           {/* comapany */}
           <FormControl sx={{ m: 1, width: 200 }}>
-            <InputLabel id="demo-multiple-checkbox-label">Company</InputLabel>
+            <InputLabel
+              id="demo-multiple-checkbox-label"
+              sx={{ fontSize: "0.8rem", margin: "-7px" }}
+            >
+              Company
+            </InputLabel>
             <Select
               labelId="demo-multiple-checkbox-label"
               id="demo-multiple-checkbox"
@@ -256,6 +266,7 @@ const Home = () => {
               input={<OutlinedInput label="Name" />}
               renderValue={(selected) => selected.join(", ")}
               MenuProps={MenuProps}
+              sx={{ height: 30, textAlign: "center", fontSize: "0.8em" }}
             >
               {company &&
                 company?.map((companyItem) => (
@@ -271,7 +282,12 @@ const Home = () => {
 
           {/* Dataetype */}
           <FormControl sx={{ m: 1, width: 200, height: "30px" }}>
-            <InputLabel id="demo-mutiple-chip-label">Datetype</InputLabel>
+            <InputLabel
+              id="demo-mutiple-chip-label"
+              sx={{ fontSize: "0.8rem", margin: "-7px" }}
+            >
+              Datetype
+            </InputLabel>
             <Select
               labelId="demo-multiple-checkbox-label"
               value={dateType}
@@ -279,6 +295,7 @@ const Home = () => {
               input={<OutlinedInput label="Tag" />}
               renderValue={(selected) => selected.join(", ")}
               MenuProps={MenuProps}
+              sx={{ height: 30, fontSize: "0.8em" }}
             >
               {dateTypes.map((dateType) => (
                 <MenuItem
@@ -294,26 +311,60 @@ const Home = () => {
           {/* date filter from date */}
           <FormControl sx={{ m: 1, width: 300 }}>
             <TextField
-              type="date"
+              type="datetime-local"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
+              InputProps={{
+                sx: {
+                  height: "30px",
+                  "&:before": { borderBottom: "none" },
+                  "&:after": { borderBottom: "none" },
+                },
+              }}
             />
           </FormControl>
           {/* date filter to now date */}
           <FormControl sx={{ m: 1, width: 300 }}>
             <TextField
-              type="date"
+              type="datetime-local"
               value={dateNow}
               onChange={(e) => setDateNow(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
+              InputProps={{
+                sx: {
+                  height: "30px",
+                  "&:before": { borderBottom: "none" },
+                  "&:after": { borderBottom: "none" },
+                },
+              }}
             />
           </FormControl>
           {/* searchBox for searching an article */}
-          <FormControl sx={{ m: 1, width: 400 }}>
-            <TextField label="Search" />
+          <FormControl sx={{ m: 1, width: 300 }}>
+            <TextField
+              label="Search"
+              InputLabelProps={{ shrink: true }}
+              inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
+              InputProps={{
+                sx: {
+                  height: "30px",
+                  "&:before": { borderBottom: "none" },
+                  "&:after": { borderBottom: "none" },
+                },
+              }}
+            />
           </FormControl>
           {/* qc1 */}
-          <FormControl sx={{ m: 1, width: 200 }}>
-            <InputLabel id="qc1-select-label">QC1</InputLabel>
+          <FormControl sx={{ m: 1, width: 100 }}>
+            <InputLabel
+              id="qc1-select-label"
+              sx={{ fontSize: "0.8rem", margin: "-7px" }}
+            >
+              QC1
+            </InputLabel>
             <Select
               id="qc1-checks"
               value={qc1}
@@ -321,6 +372,7 @@ const Home = () => {
               input={<OutlinedInput label="tag" />}
               renderValue={(selected) => selected.join(", ")}
               MenuProps={MenuProps}
+              sx={{ height: 30, fontSize: "0.8em" }}
             >
               {qc1Array.map((option) => (
                 <MenuItem key={option} value={option}>
@@ -330,14 +382,20 @@ const Home = () => {
             </Select>
           </FormControl>
           {/* qc2 */}
-          <FormControl sx={{ m: 1, width: 200 }}>
-            <InputLabel id="qc1-select-label">QC2</InputLabel>
+          <FormControl sx={{ m: 1, width: 100 }}>
+            <InputLabel
+              id="qc1-select-label"
+              sx={{ fontSize: "0.8rem", margin: "-7px" }}
+            >
+              QC2
+            </InputLabel>
             <Select
               id="qc1-checks"
               value={qc2}
               onChange={handleQc2}
               input={<OutlinedInput label="tag" />}
               MenuProps={MenuProps}
+              sx={{ height: 30, fontSize: "0.8em" }}
             >
               {qc1Array.map((option) => (
                 <MenuItem key={option} value={option}>
@@ -346,17 +404,46 @@ const Home = () => {
               ))}
             </Select>
           </FormControl>
-          {/* users */}
-          <FormControl sx={{ m: 1, width: 200 }}>
-            <InputLabel id="users-select-label">Users</InputLabel>
-            <Select input={<OutlinedInput label="tag" />}>
+          {/* qc1 done */}
+          <FormControl sx={{ m: 1, width: 100 }}>
+            <InputLabel
+              id="users-select-label"
+              sx={{ fontSize: "0.8rem", margin: "-7px" }}
+            >
+              Isqc1 Done
+            </InputLabel>
+            <Select
+              input={<OutlinedInput label="tag" />}
+              sx={{ height: 30, fontSize: "0.8em" }}
+            >
+              <MenuItem>Null</MenuItem>
+              <MenuItem>Null</MenuItem>
+            </Select>
+          </FormControl>
+          {/* qc2 done */}
+          <FormControl sx={{ m: 1, width: 100 }}>
+            <InputLabel
+              id="users-select-label"
+              sx={{ fontSize: "0.8rem", margin: "-7px" }}
+            >
+              Isqc2 Done
+            </InputLabel>
+            <Select
+              input={<OutlinedInput label="tag" />}
+              sx={{ height: 30, fontSize: "0.8em" }}
+            >
               <MenuItem>Null</MenuItem>
               <MenuItem>Null</MenuItem>
             </Select>
           </FormControl>
           {/* languages */}
-          <FormControl sx={{ m: 1, width: 200 }}>
-            <InputLabel id="languages-select-label">Languages</InputLabel>
+          <FormControl sx={{ m: 1, width: 150 }}>
+            <InputLabel
+              id="languages-select-label"
+              sx={{ fontSize: "0.8rem", margin: "-7px" }}
+            >
+              Languages
+            </InputLabel>
             <Select
               id="languages"
               value={language}
@@ -364,6 +451,7 @@ const Home = () => {
               input={<OutlinedInput label="Name" />}
               MenuProps={MenuProps}
               multiple
+              sx={{ height: 30, fontSize: "0.8em" }}
             >
               {Object.entries(languages).map(([languagename, languagecode]) => (
                 <MenuItem key={languagecode} value={languagecode}>
@@ -373,8 +461,13 @@ const Home = () => {
             </Select>
           </FormControl>
           {/* continents */}
-          <FormControl sx={{ m: 1, width: 200 }}>
-            <InputLabel id="continent-type-select-label">Continent</InputLabel>
+          <FormControl sx={{ m: 1, width: 150 }}>
+            <InputLabel
+              id="continent-type-select-label"
+              sx={{ fontSize: "0.8rem", margin: "-7px" }}
+            >
+              Continent
+            </InputLabel>
             <Select
               id="continents"
               value={continent}
@@ -382,6 +475,7 @@ const Home = () => {
               input={<OutlinedInput label="Name" />}
               renderValue={(selected) => selected.join(", ")}
               MenuProps={MenuProps}
+              sx={{ height: 30, fontSize: "0.8em" }}
             >
               {continents.map((continent) => (
                 <MenuItem key={continent} value={continent}>
@@ -391,8 +485,13 @@ const Home = () => {
             </Select>
           </FormControl>
           {/* countries */}
-          <FormControl sx={{ m: 1, width: 200 }}>
-            <InputLabel id="countries-select-label">Countries</InputLabel>
+          <FormControl sx={{ m: 1, width: 150 }}>
+            <InputLabel
+              id="countries-select-label"
+              sx={{ fontSize: "0.8rem", margin: "-7px" }}
+            >
+              Countries
+            </InputLabel>
             <Select
               id="countries"
               value={country}
@@ -400,6 +499,7 @@ const Home = () => {
               input={<OutlinedInput label="Name" />}
               MenuProps={MenuProps}
               multiple
+              sx={{ height: 30, fontSize: "0.8em" }}
             >
               {filteredCountries.map((country) => (
                 <MenuItem key={country} value={country}>
@@ -415,9 +515,10 @@ const Home = () => {
             sx={{
               m: 1,
               width: 100,
-              height: 50,
+              height: 30,
               bgcolor: "gray",
               color: "white",
+              fontSize: "0.8em",
             }}
           >
             Search

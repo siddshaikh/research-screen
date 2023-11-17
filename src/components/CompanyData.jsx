@@ -16,6 +16,7 @@ import { Container } from "@mui/system";
 import axios from "axios";
 import { ResearchContext } from "../context/ContextProvider";
 import { editRowValues } from "../global/dataArray";
+import Loader from "./Loader";
 
 const CompanyData = () => {
   // context values
@@ -104,7 +105,8 @@ const CompanyData = () => {
 
   useEffect(() => {
     fetchTableData();
-  }, [clientId, companyId]);
+    setShowTableData(false);
+  }, [companyId]);
   // Function to find company id based on selection
   const getCompanyId = (companyData, companyNames) => {
     let companyId = [];
@@ -218,17 +220,28 @@ const CompanyData = () => {
 
   // handle Search Table Values
   const handleSearch = () => {
-    const output =
-      tableData &&
-      tableData.filter((items) =>
-        items.company_name.toLowerCase().includes(searchValue.toLowerCase())
-      );
-    setSearchedData(output && output);
-  };
+    if (searchValue.trim() === "") {
+      setSearchedData([]);
+      return;
+    }
 
-  useEffect(() => {
-    handleSearch();
-  }, [searchValue]);
+    const output = tableData.filter((rowData) => {
+      for (const key in rowData) {
+        if (Object.prototype.hasOwnProperty.call(rowData, key)) {
+          const value = rowData[key];
+          if (
+            value !== null &&
+            value.toString().toLowerCase().includes(searchValue.toLowerCase())
+          ) {
+            return true;
+          }
+        }
+      }
+      return false;
+    });
+
+    setSearchedData(output);
+  };
 
   const handlePostData = async () => {
     const data =
@@ -297,7 +310,10 @@ const CompanyData = () => {
             >
               <TableCell className="table-cell">
                 <div className="h-14 overflow-hidden">
-                  {rowData[header.toLowerCase().replace(/ /g, "_")]}
+                  {/* Highlighting logic */}
+                  {highlightSearch(
+                    rowData[header.toLowerCase().replace(/ /g, "_")]
+                  )}
                 </div>
               </TableCell>
             </Tooltip>
@@ -306,6 +322,25 @@ const CompanyData = () => {
       ))
     ) : (
       <p className="text-red-500 w-screen text-center">No data found.</p>
+    );
+  };
+
+  const highlightSearch = (text) => {
+    if (!text || !searchValue.trim()) {
+      return text;
+    }
+
+    const regex = new RegExp(`(${searchValue})`, "gi");
+    const parts = text.toString().split(regex);
+
+    return parts.map((part, index) =>
+      regex.test(part) ? (
+        <span key={index} style={{ backgroundColor: "yellow" }}>
+          {part}
+        </span>
+      ) : (
+        part
+      )
     );
   };
 
@@ -321,20 +356,52 @@ const CompanyData = () => {
           <Typography sx={{ color: "green" }}>{successMessage}</Typography>
         )}
       </Container>
-      <Container sx={{ display: "flex", justifyContent: "center", gap: 3 }}>
+      <Container
+        sx={{
+          display: "flex",
+          justifyContent: "space-evenly",
+          alignItems: "center",
+          gap: 3,
+        }}
+      >
         {/* saved or not */}
-        {/* searchfield for the searching tableData */}
-        <TextField
-          label="Company Name"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-        />
+        <Container sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+          {/* searchfield for the searching tableData */}
+          <TextField
+            label="Company Name"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
+            InputProps={{
+              sx: {
+                height: "30px",
+                "&:before": { borderBottom: "none" },
+                "&:after": { borderBottom: "none" },
+              },
+            }}
+          />
+          <Button
+            onClick={handleSearch}
+            sx={{
+              height: 30,
+              fontSize: "0.8em",
+              backgroundColor: "gray",
+              color: "#fff",
+            }}
+          >
+            Search
+          </Button>
+        </Container>
         <FormControl sx={{ width: "15rem" }}>
-          <InputLabel>Select Row</InputLabel>
+          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
+            Select Row
+          </InputLabel>
           <Select
             value={editRow}
             onChange={(e) => setEditRow(e.target.value)}
             label="Select Row"
+            sx={{ height: 30, fontSize: "0.8em" }}
           >
             {editRowValues.map((item) => (
               <MenuItem value={item.value} key={item.id}>
@@ -346,11 +413,28 @@ const CompanyData = () => {
         <TextField
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
+          InputLabelProps={{ shrink: true }}
+          inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
+          InputProps={{
+            sx: {
+              height: "30px",
+              "&:before": { borderBottom: "none" },
+              "&:after": { borderBottom: "none" },
+            },
+          }}
         />
-        <Button variant="outlined" onClick={handleApplyChanges}>
+        <Button
+          variant="outlined"
+          onClick={handleApplyChanges}
+          sx={{ height: 30, fontSize: "0.8em" }}
+        >
           Apply
         </Button>
-        <Button variant="contained" onClick={handlePostData}>
+        <Button
+          variant="contained"
+          onClick={handlePostData}
+          sx={{ height: 30, fontSize: "0.8em" }}
+        >
           Save
         </Button>
       </Container>
