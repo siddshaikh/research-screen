@@ -393,6 +393,69 @@ const CompanyData = () => {
             Search
           </Button>
         </Container>
+
+        {/* dropdowns for separating the files */}
+        {/* reporting tone */}
+        <FormControl sx={{ width: "15rem" }}>
+          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
+            Reporting Tone
+          </InputLabel>
+          <Select label="Reporting Tone" sx={{ height: 30, fontSize: "0.8em" }}>
+            <MenuItem>1</MenuItem>
+            <MenuItem>2</MenuItem>
+            <MenuItem>3</MenuItem>
+          </Select>
+        </FormControl>
+        {/* Prominence */}
+        <FormControl sx={{ width: "15rem" }}>
+          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
+            Prominence
+          </InputLabel>
+          <Select label="Prominence" sx={{ height: 30, fontSize: "0.8em" }}>
+            <MenuItem>1</MenuItem>
+            <MenuItem>2</MenuItem>
+            <MenuItem>3</MenuItem>
+          </Select>
+        </FormControl>
+        {/* Reporting subject */}
+        <FormControl sx={{ width: "15rem" }}>
+          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
+            Reporting Subject
+          </InputLabel>
+          <Select
+            label="Reporting Subject"
+            sx={{ height: 30, fontSize: "0.8em" }}
+          >
+            <MenuItem>1</MenuItem>
+            <MenuItem>2</MenuItem>
+            <MenuItem>3</MenuItem>
+          </Select>
+        </FormControl>
+        {/* sub category */}
+        <FormControl sx={{ width: "15rem" }}>
+          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
+            Sub Category
+          </InputLabel>
+          <Select label="Sub Category" sx={{ height: 30, fontSize: "0.8em" }}>
+            <MenuItem>1</MenuItem>
+            <MenuItem>2</MenuItem>
+            <MenuItem>3</MenuItem>
+          </Select>
+        </FormControl>
+        {/* Details summary */}
+        <FormControl sx={{ width: "15rem" }}>
+          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
+            Details summary
+          </InputLabel>
+          <Select
+            label="Details Summary"
+            sx={{ height: 30, fontSize: "0.8em" }}
+          >
+            <MenuItem>1</MenuItem>
+            <MenuItem>2</MenuItem>
+            <MenuItem>3</MenuItem>
+          </Select>
+        </FormControl>
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
             Select Row
