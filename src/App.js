@@ -13,6 +13,7 @@ import { checkUserAuthenticate } from "./auth/auth";
 
 function App() {
   const { userToken, setUserToken } = useContext(ResearchContext);
+  console.log(userToken);
   useEffect(() => {
     checkUserAuthenticate(setUserToken);
   }, []);

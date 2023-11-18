@@ -16,7 +16,7 @@ import { Container } from "@mui/system";
 import axios from "axios";
 import { ResearchContext } from "../context/ContextProvider";
 import { editRowValues } from "../global/dataArray";
-import Loader from "./Loader";
+import useFetchData from "../hooks/useFetchData";
 
 const CompanyData = () => {
   // context values
@@ -61,7 +61,61 @@ const CompanyData = () => {
   // sotrting
   const [sortDirection, setSortDirection] = useState("asc");
   const [sortColumn, setSortColumn] = useState("");
-
+  // dropdown fetch
+  const url = process.env.REACT_APP_BASE_URL;
+  // reporting tone
+  const [reportingTones, setReportingTones] = useState([]);
+  const [reportingTone, setReportingTone] = useState("");
+  const {
+    data: reportingTons,
+    error: reportingToneError,
+    loading: reportingToneLoading,
+  } = useFetchData(`${url}reportingtonelist`);
+  useEffect(() => {
+    if (reportingTons.data) {
+      setReportingTones(reportingTons.data.reportingtones_list);
+    }
+  }, [reportingTons]);
+  // prominence
+  const [prominences, setProminences] = useState([]);
+  const [prominence, setProminence] = useState("");
+  console.log({ proms: prominence });
+  const {
+    data: prominenceLists,
+    error: prominenceError,
+    loading: prominenceLoading,
+  } = useFetchData(`${url}prominencelist`);
+  useEffect(() => {
+    if (prominenceLists.data) {
+      setProminences(prominenceLists.data.prominence_list);
+    }
+  }, [prominenceLists]);
+  //reportingsubject_list
+  const [subjects, setSubjects] = useState([]);
+  const [subject, setSubject] = useState("");
+  const {
+    data: subjectLists,
+    error: subjectError,
+    loading: subjectLoading,
+  } = useFetchData(`${url}reportingsubjectlist`);
+  useEffect(() => {
+    if (subjectLists.data) {
+      setSubjects(subjectLists.data.reportingsubject_list);
+    }
+  }, [subjectLists]);
+  //subcategory_list
+  const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState("");
+  const {
+    data: categoryLists,
+    error: categoryError,
+    loading: categoryLoading,
+  } = useFetchData(`${url}subcategorylist`);
+  useEffect(() => {
+    if (categoryLists.data) {
+      setCategories(categoryLists.data.subcategory_list);
+    }
+  }, [categoryLists]);
   // fetching data basis on the client and company selection
   const fetchTableData = async () => {
     if (companies.length > 0) {
@@ -400,34 +454,39 @@ const CompanyData = () => {
           <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
             Tone
           </InputLabel>
-          <Select label="Reporting Tone" sx={{ height: 30, fontSize: "0.8em" }}>
-            <MenuItem>1</MenuItem>
-            <MenuItem>2</MenuItem>
-            <MenuItem>3</MenuItem>
+          <Select
+            label="Reporting Tone"
+            sx={{ height: 30, fontSize: "0.8em" }}
+            value={reportingTone}
+            onChange={(e) => setReportingTone(e.target.value)}
+          >
+            {reportingTones.map((item) => (
+              <MenuItem value={item.value} key={item.value}>
+                {item.value}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
+
         {/* Prominence */}
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
             Prominence
           </InputLabel>
-          <Select label="Prominence" sx={{ height: 30, fontSize: "0.8em" }}>
-            <MenuItem>1</MenuItem>
-            <MenuItem>2</MenuItem>
-            <MenuItem>3</MenuItem>
+          <Select
+            label="Prominence"
+            sx={{ height: 30, fontSize: "0.8em" }}
+            value={prominence}
+            onChange={(e) => setProminence(e.target.value)}
+          >
+            {prominences.map((item) => (
+              <MenuItem value={item} key={item}>
+                {item}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
-        {/* prominence 2 */}
-        <FormControl sx={{ width: "15rem" }}>
-          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
-            Prominence2
-          </InputLabel>
-          <Select label="Prominence" sx={{ height: 30, fontSize: "0.8em" }}>
-            <MenuItem>1</MenuItem>
-            <MenuItem>2</MenuItem>
-            <MenuItem>3</MenuItem>
-          </Select>
-        </FormControl>
+
         {/* Reporting subject */}
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
@@ -436,10 +495,12 @@ const CompanyData = () => {
           <Select
             label="Reporting Subject"
             sx={{ height: 30, fontSize: "0.8em" }}
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
           >
-            <MenuItem>1</MenuItem>
-            <MenuItem>2</MenuItem>
-            <MenuItem>3</MenuItem>
+            {subjects.map((item) => (
+              <MenuItem key={item}>{item}</MenuItem>
+            ))}
           </Select>
         </FormControl>
         {/* sub category */}
@@ -447,14 +508,20 @@ const CompanyData = () => {
           <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
             Category
           </InputLabel>
-          <Select label="Sub Category" sx={{ height: 30, fontSize: "0.8em" }}>
-            <MenuItem>1</MenuItem>
-            <MenuItem>2</MenuItem>
-            <MenuItem>3</MenuItem>
+          <Select
+            label="Sub Category"
+            sx={{ height: 30, fontSize: "0.8em" }}
+            key={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            {categories.map((item) => (
+              <MenuItem value={item} key={item}>
+                {item}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         {/* Details summary */}
-
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
             Select Row

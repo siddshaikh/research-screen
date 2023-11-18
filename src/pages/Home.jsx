@@ -96,7 +96,6 @@ const Home = () => {
   useEffect(() => {
     if (clientData.data) {
       setClients(clientData.data.clients);
-      console.log("working");
     } else {
       console.log(ClientEror);
     }
