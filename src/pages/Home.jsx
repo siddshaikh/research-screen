@@ -5,7 +5,16 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { Button, Divider, ListItemText, TextField } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  Divider,
+  FormControlLabel,
+  FormGroup,
+  ListItemText,
+  TextField,
+  Typography,
+} from "@mui/material";
 import {
   dateTypes,
   qc1Array,
@@ -64,6 +73,10 @@ const Home = () => {
     setQc1,
     qc2,
     setQc2,
+    isImage,
+    setIsImage,
+    isvideo,
+    setIsVideo,
     setShowTableData,
     dateType,
     setDateType,
@@ -309,7 +322,7 @@ const Home = () => {
             </Select>
           </FormControl>
           {/* date filter from date */}
-          <FormControl sx={{ m: 1, width: 300 }}>
+          <FormControl sx={{ m: 1, width: 200 }}>
             <TextField
               type="datetime-local"
               value={fromDate}
@@ -326,26 +339,11 @@ const Home = () => {
             />
           </FormControl>
           {/* date filter to now date */}
-          <FormControl sx={{ m: 1, width: 300 }}>
+          <FormControl sx={{ m: 1, width: 200 }}>
             <TextField
               type="datetime-local"
               value={dateNow}
               onChange={(e) => setDateNow(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
-              InputProps={{
-                sx: {
-                  height: "30px",
-                  "&:before": { borderBottom: "none" },
-                  "&:after": { borderBottom: "none" },
-                },
-              }}
-            />
-          </FormControl>
-          {/* searchBox for searching an article */}
-          <FormControl sx={{ m: 1, width: 300 }}>
-            <TextField
-              label="Search"
               InputLabelProps={{ shrink: true }}
               inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
               InputProps={{
@@ -436,6 +434,50 @@ const Home = () => {
               <MenuItem>Null</MenuItem>
             </Select>
           </FormControl>
+          {/* image checkbox */}
+          <FormControl>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isImage}
+                    onChange={(e) => setIsImage(e.target.checked)}
+                  />
+                }
+                label={<Typography variant="body2">Image</Typography>}
+              />
+            </FormGroup>
+          </FormControl>
+          {/* video checkbox */}
+          <FormControl>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isvideo}
+                    onChange={(e) => setIsVideo(e.target.checked)}
+                  />
+                }
+                label={<Typography variant="body2">Video</Typography>}
+              />
+            </FormGroup>
+          </FormControl>
+          {/* searchBox for searching an article */}
+          <FormControl sx={{ m: 1, width: 300 }}>
+            <TextField
+              placeholder="Search"
+              InputLabelProps={{ shrink: true }}
+              inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
+              InputProps={{
+                sx: {
+                  height: "30px",
+                  "&:before": { borderBottom: "none" },
+                  "&:after": { borderBottom: "none" },
+                },
+              }}
+            />
+          </FormControl>
+
           {/* languages */}
           <FormControl sx={{ m: 1, width: 150 }}>
             <InputLabel
@@ -476,6 +518,7 @@ const Home = () => {
               renderValue={(selected) => selected.join(", ")}
               MenuProps={MenuProps}
               sx={{ height: 30, fontSize: "0.8em" }}
+              multiple
             >
               {continents.map((continent) => (
                 <MenuItem key={continent} value={continent}>

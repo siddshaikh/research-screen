@@ -368,7 +368,7 @@ const CompanyData = () => {
         <Container sx={{ display: "flex", alignItems: "center", gap: 3 }}>
           {/* searchfield for the searching tableData */}
           <TextField
-            label="Company Name"
+            placeholder="Find Text"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             InputLabelProps={{ shrink: true }}
@@ -390,7 +390,7 @@ const CompanyData = () => {
               color: "#fff",
             }}
           >
-            Search
+            Find
           </Button>
         </Container>
 
@@ -398,7 +398,7 @@ const CompanyData = () => {
         {/* reporting tone */}
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
-            Reporting Tone
+            Tone
           </InputLabel>
           <Select label="Reporting Tone" sx={{ height: 30, fontSize: "0.8em" }}>
             <MenuItem>1</MenuItem>
@@ -417,10 +417,21 @@ const CompanyData = () => {
             <MenuItem>3</MenuItem>
           </Select>
         </FormControl>
+        {/* prominence 2 */}
+        <FormControl sx={{ width: "15rem" }}>
+          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
+            Prominence2
+          </InputLabel>
+          <Select label="Prominence" sx={{ height: 30, fontSize: "0.8em" }}>
+            <MenuItem>1</MenuItem>
+            <MenuItem>2</MenuItem>
+            <MenuItem>3</MenuItem>
+          </Select>
+        </FormControl>
         {/* Reporting subject */}
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
-            Reporting Subject
+            Subject
           </InputLabel>
           <Select
             label="Reporting Subject"
@@ -434,7 +445,7 @@ const CompanyData = () => {
         {/* sub category */}
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
-            Sub Category
+            Category
           </InputLabel>
           <Select label="Sub Category" sx={{ height: 30, fontSize: "0.8em" }}>
             <MenuItem>1</MenuItem>
@@ -443,19 +454,7 @@ const CompanyData = () => {
           </Select>
         </FormControl>
         {/* Details summary */}
-        <FormControl sx={{ width: "15rem" }}>
-          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
-            Details summary
-          </InputLabel>
-          <Select
-            label="Details Summary"
-            sx={{ height: 30, fontSize: "0.8em" }}
-          >
-            <MenuItem>1</MenuItem>
-            <MenuItem>2</MenuItem>
-            <MenuItem>3</MenuItem>
-          </Select>
-        </FormControl>
+
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
             Select Row
@@ -473,6 +472,9 @@ const CompanyData = () => {
             ))}
           </Select>
         </FormControl>
+      </Container>
+      <div className="mt-2 flex items-center justify-center gap-4">
+        {" "}
         <TextField
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
@@ -480,6 +482,7 @@ const CompanyData = () => {
           inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
           InputProps={{
             sx: {
+              width: 400,
               height: "30px",
               "&:before": { borderBottom: "none" },
               "&:after": { borderBottom: "none" },
@@ -500,7 +503,7 @@ const CompanyData = () => {
         >
           Save
         </Button>
-      </Container>
+      </div>
 
       {/* main table */}
       <div className="mt-4">

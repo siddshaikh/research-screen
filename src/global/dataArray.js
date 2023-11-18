@@ -1,15 +1,7 @@
 export const dateTypes = ["Article", "Upload"];
 export const qc1Array = ["Yes", "No", "All"];
 
-export const continents = [
-  "Africa",
-  "Antarctica",
-  "Asia",
-  "Europe",
-  "North America",
-  "Australia (Oceania)",
-  "South America",
-];
+export const continents = ["Africa", "Asia", "Europe", "America", "Australia"];
 export const countriesByContinent = [
   {
     continent: "Africa",
@@ -181,7 +173,7 @@ export const countriesByContinent = [
     ],
   },
   {
-    continent: "North America",
+    continent: "America",
     countries: [
       "Antigua and Barbuda",
       "Argentina",
@@ -221,7 +213,7 @@ export const countriesByContinent = [
     ],
   },
   {
-    continent: "Australia (Oceania)",
+    continent: "Australia",
     countries: [
       "Australia",
       "Fiji",
@@ -240,26 +232,26 @@ export const countriesByContinent = [
 // tableData
 //editRowValues
 export const editRowValues = [
-  {
-    id: 1,
-    value: "reporting_tone",
-    title: "Reporting Tone",
-  },
-  {
-    id: 2,
-    value: "reporting_subject",
-    title: "Reporting Subject",
-  },
-  {
-    id: 3,
-    value: "subcategory",
-    title: "Sub Category",
-  },
-  {
-    id: 4,
-    value: "prominence",
-    title: "Prominence",
-  },
+  // {
+  //   id: 1,
+  //   value: "reporting_tone",
+  //   title: "Reporting Tone",
+  // },
+  // {
+  //   id: 2,
+  //   value: "reporting_subject",
+  //   title: "Reporting Subject",
+  // },
+  // {
+  //   id: 3,
+  //   value: "subcategory",
+  //   title: "Sub Category",
+  // },
+  // {
+  //   id: 4,
+  //   value: "prominence",
+  //   title: "Prominence",
+  // },
   {
     id: 5,
     value: "detail_summary",
