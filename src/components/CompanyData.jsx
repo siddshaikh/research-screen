@@ -15,7 +15,6 @@ import {
 import { Container } from "@mui/system";
 import axios from "axios";
 import { ResearchContext } from "../context/ContextProvider";
-import { editRowValues } from "../global/dataArray";
 import useFetchData from "../hooks/useFetchData";
 
 const CompanyData = () => {
@@ -66,11 +65,7 @@ const CompanyData = () => {
   // reporting tone
   const [reportingTones, setReportingTones] = useState([]);
   const [reportingTone, setReportingTone] = useState("");
-  const {
-    data: reportingTons,
-    error: reportingToneError,
-    loading: reportingToneLoading,
-  } = useFetchData(`${url}reportingtonelist`);
+  const { data: reportingTons } = useFetchData(`${url}reportingtonelist`);
   useEffect(() => {
     if (reportingTons.data) {
       setReportingTones(reportingTons.data.reportingtones_list);
@@ -79,12 +74,7 @@ const CompanyData = () => {
   // prominence
   const [prominences, setProminences] = useState([]);
   const [prominence, setProminence] = useState("");
-  console.log({ proms: prominence });
-  const {
-    data: prominenceLists,
-    error: prominenceError,
-    loading: prominenceLoading,
-  } = useFetchData(`${url}prominencelist`);
+  const { data: prominenceLists } = useFetchData(`${url}prominencelist`);
   useEffect(() => {
     if (prominenceLists.data) {
       setProminences(prominenceLists.data.prominence_list);
@@ -93,11 +83,7 @@ const CompanyData = () => {
   //reportingsubject_list
   const [subjects, setSubjects] = useState([]);
   const [subject, setSubject] = useState("");
-  const {
-    data: subjectLists,
-    error: subjectError,
-    loading: subjectLoading,
-  } = useFetchData(`${url}reportingsubjectlist`);
+  const { data: subjectLists } = useFetchData(`${url}reportingsubjectlist`);
   useEffect(() => {
     if (subjectLists.data) {
       setSubjects(subjectLists.data.reportingsubject_list);
@@ -106,16 +92,13 @@ const CompanyData = () => {
   //subcategory_list
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState("");
-  const {
-    data: categoryLists,
-    error: categoryError,
-    loading: categoryLoading,
-  } = useFetchData(`${url}subcategorylist`);
+  const { data: categoryLists } = useFetchData(`${url}subcategorylist`);
   useEffect(() => {
     if (categoryLists.data) {
       setCategories(categoryLists.data.subcategory_list);
     }
   }, [categoryLists]);
+  //summary (editing manually)
   // fetching data basis on the client and company selection
   const fetchTableData = async () => {
     if (companies.length > 0) {
@@ -213,32 +196,6 @@ const CompanyData = () => {
     setSelectedRowData(allSelected ? [] : [...tableData]);
   };
 
-  const handleApplyChanges = () => {
-    if (selectedRowData.length > 0) {
-      setTableData((prevTableData) => {
-        return prevTableData?.map((row) => {
-          if (selectedRowData.includes(row)) {
-            // Update only the selected rows
-            return {
-              ...row,
-              [editRow]: editValue,
-            };
-          }
-          return row;
-        });
-      });
-
-      // Update the updatedRows state
-      setUpadatedRows((prevUpdatedRows) => [
-        ...prevUpdatedRows,
-        ...selectedRowData?.map((selectedRow) => ({
-          ...selectedRow,
-          [editRow]: editValue,
-        })),
-      ]);
-    }
-  };
-
   const handleSort = (clickedHeader) => {
     if (sortColumn === clickedHeader) {
       // Toggle sort direction if the same column is clicked
@@ -297,19 +254,55 @@ const CompanyData = () => {
     setSearchedData(output);
   };
 
+  //updating tabledata
+  const handleApplyChanges = () => {
+    if (selectedRowData.length > 0) {
+      setTableData((prevTableData) => {
+        return prevTableData?.map((row) => {
+          if (selectedRowData.includes(row)) {
+            // Update only the selected rows
+            return {
+              ...row,
+              reporting_tone: reportingTone,
+              reporting_subject: subject,
+              subcategory: category,
+              prominence: prominence,
+              detail_summary: editValue,
+            };
+          }
+          return row;
+        });
+      });
+
+      // Update the updatedRows state with the same changes as setTableData
+      setUpadatedRows((prevUpdatedRows) => {
+        const updatedSelectedRows = selectedRowData.map((selectedRow) => ({
+          ...selectedRow,
+          reporting_tone: reportingTone,
+          reporting_subject: subject,
+          subcategory: category,
+          prominence: prominence,
+          detail_summary: editValue,
+        }));
+
+        return [...prevUpdatedRows, ...updatedSelectedRows];
+      });
+    }
+  };
+
+  //posting updated tabledata to database
   const handlePostData = async () => {
     const data =
       updatedRows.length > 0 &&
       updatedRows?.map((row) => ({
         social_feed_id: row.social_feed_id,
-        company_id: row.company_id,
+        company_id: companyId,
         reporting_tone: row.reporting_tone,
         reporting_subject: row.reporting_subject,
         subcategory: row.subcategory,
         prominence: row.prominence,
         detail_summary: row.detail_summary,
       }));
-
     try {
       const url = "http://51.68.220.77:8000/update2database/";
       if (data.length > 0) {
@@ -323,6 +316,11 @@ const CompanyData = () => {
         setSavedSuccess(true);
         setSuccessMessage("Data Saved Successfully!");
         setSelectedRowData([]);
+        // clearing the dd values
+        setReportingTone("");
+        setSubject("");
+        setCategory("");
+        setProminence("");
       } else {
         setSuccessMessage("No data to save.");
       }
@@ -499,19 +497,21 @@ const CompanyData = () => {
             onChange={(e) => setSubject(e.target.value)}
           >
             {subjects.map((item) => (
-              <MenuItem key={item}>{item}</MenuItem>
+              <MenuItem key={item} value={item}>
+                {item}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
-        {/* sub category */}
+        {/*category */}
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
             Category
           </InputLabel>
           <Select
-            label="Sub Category"
+            label="Category"
             sx={{ height: 30, fontSize: "0.8em" }}
-            key={category}
+            value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
             {categories.map((item) => (
@@ -527,16 +527,12 @@ const CompanyData = () => {
             Select Row
           </InputLabel>
           <Select
-            value={editRow}
+            value={editValue}
             onChange={(e) => setEditRow(e.target.value)}
             label="Select Row"
             sx={{ height: 30, fontSize: "0.8em" }}
           >
-            {editRowValues.map((item) => (
-              <MenuItem value={item.value} key={item.id}>
-                {item.title}
-              </MenuItem>
-            ))}
+            <MenuItem value="detail_summary">Summary</MenuItem>
           </Select>
         </FormControl>
       </Container>

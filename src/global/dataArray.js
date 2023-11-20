@@ -230,31 +230,3 @@ export const countriesByContinent = [
 ];
 
 // tableData
-//editRowValues
-export const editRowValues = [
-  // {
-  //   id: 1,
-  //   value: "reporting_tone",
-  //   title: "Reporting Tone",
-  // },
-  // {
-  //   id: 2,
-  //   value: "reporting_subject",
-  //   title: "Reporting Subject",
-  // },
-  // {
-  //   id: 3,
-  //   value: "subcategory",
-  //   title: "Sub Category",
-  // },
-  // {
-  //   id: 4,
-  //   value: "prominence",
-  //   title: "Prominence",
-  // },
-  {
-    id: 5,
-    value: "detail_summary",
-    title: "Detail Summary",
-  },
-];

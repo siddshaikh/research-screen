@@ -87,12 +87,14 @@ const Home = () => {
     country,
     setCountry,
   } = useContext(ResearchContext);
+  // base url
+  const base_url = process.env.REACT_APP_BASE_URL;
   // clients
   const {
     data: clientData,
     error: ClientEror,
     loading: clientLoading,
-  } = useFetchData("http://51.68.220.77:8000/clientlist/");
+  } = useFetchData(`${base_url}clientlist/`);
   useEffect(() => {
     if (clientData.data) {
       setClients(clientData.data.clients);
@@ -105,10 +107,8 @@ const Home = () => {
     data: companyData,
     error: companyError,
     loading: companyLoading,
-  } = useFetchData(
-    clientId ? `http://51.68.220.77:8000/companylist/${clientId}` : ""
-  );
-
+  } = useFetchData(clientId ? `${base_url}companylist/${clientId}` : "");
+  console.log(companyData);
   useEffect(() => {
     if (clientId || companyData.data) {
       setCompany(companyData?.data?.companies || []);
@@ -130,7 +130,7 @@ const Home = () => {
     data: langs,
     error: langsError,
     loading: langsLoading,
-  } = useFetchData("http://51.68.220.77:8000/languagelist/");
+  } = useFetchData(`${base_url}languagelist/`);
 
   useEffect(() => {
     if (langs.data) {
