@@ -107,10 +107,15 @@ const CompanyData = () => {
           client_id: clientId,
           company_id: companyId,
           date_type: dateType,
-          qc1by: qc1,
+          // qc1_by: qc1,
+          // qc2_by: qc2,
+          // is_qc1: 1,
+          // is_qc2: 0,
           from_datetime: fromDate,
           to_datetime: dateNow,
-          // search_text: "",
+          // has_image:"",
+          // has_video:"",
+          search_text: "",
           // continent: continent,
           // country: country,
           // language: language,
@@ -189,7 +194,6 @@ const CompanyData = () => {
         : [...selectedRowData, rowData]
     );
   };
-
   const handleMasterCheckboxChange = () => {
     const allSelected = selectedRowData.length === tableData.length;
 
@@ -258,39 +262,51 @@ const CompanyData = () => {
   const handleApplyChanges = () => {
     if (selectedRowData.length > 0) {
       setTableData((prevTableData) => {
-        return prevTableData?.map((row) => {
+        return prevTableData.map((row) => {
           if (selectedRowData.includes(row)) {
-            // Update only the selected rows
             return {
               ...row,
-              reporting_tone: reportingTone,
-              reporting_subject: subject,
-              subcategory: category,
-              prominence: prominence,
-              detail_summary: editValue,
+              reporting_tone: reportingTone || row.reporting_tone,
+              reporting_subject: subject || row.reporting_subject,
+              subcategory: category || row.subcategory,
+              prominence: prominence || row.prominence,
+              detail_summary: editValue || row.detail_summary,
             };
           }
           return row;
         });
       });
 
-      // Update the updatedRows state with the same changes as setTableData
       setUpadatedRows((prevUpdatedRows) => {
-        const updatedSelectedRows = selectedRowData.map((selectedRow) => ({
-          ...selectedRow,
-          reporting_tone: reportingTone,
-          reporting_subject: subject,
-          subcategory: category,
-          prominence: prominence,
-          detail_summary: editValue,
-        }));
+        const updatedSelectedRows = selectedRowData.map((selectedRow) => {
+          const foundPrevRow = prevUpdatedRows.find(
+            (prevRow) => prevRow === selectedRow
+          );
+          if (foundPrevRow) {
+            return {
+              ...foundPrevRow,
+              reporting_tone: reportingTone || foundPrevRow.reporting_tone,
+              reporting_subject: subject || foundPrevRow.reporting_subject,
+              subcategory: category || foundPrevRow.subcategory,
+              prominence: prominence || foundPrevRow.prominence,
+              detail_summary: editValue || foundPrevRow.detail_summary,
+            };
+          }
+          return selectedRow;
+        });
 
-        return [...prevUpdatedRows, ...updatedSelectedRows];
+        return [
+          ...prevUpdatedRows.filter(
+            (prevRow) => !selectedRowData.includes(prevRow)
+          ),
+          ...updatedSelectedRows,
+        ];
       });
     }
   };
 
   //posting updated tabledata to database
+
   const handlePostData = async () => {
     const data =
       updatedRows.length > 0 &&

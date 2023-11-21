@@ -108,7 +108,6 @@ const Home = () => {
     error: companyError,
     loading: companyLoading,
   } = useFetchData(clientId ? `${base_url}companylist/${clientId}` : "");
-  console.log(companyData);
   useEffect(() => {
     if (clientId || companyData.data) {
       setCompany(companyData?.data?.companies || []);
