@@ -23,10 +23,9 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 function Login() {
-  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { setUserToken } = useContext(ResearchContext);
+  const { name, setName, setUserToken } = useContext(ResearchContext);
 
   const authenticateUser = async () => {
     try {

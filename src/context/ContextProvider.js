@@ -2,6 +2,8 @@ import React, { createContext, useEffect, useState } from "react";
 
 export const ResearchContext = createContext(null);
 const ContextProvider = ({ children }) => {
+  //state for the login component
+  const [name, setName] = useState("");
   const [userToken, setUserToken] = useState("");
   // clientId for the fetching company
   const [clientId, setClientId] = useState("");
@@ -45,6 +47,8 @@ const ContextProvider = ({ children }) => {
   return (
     <ResearchContext.Provider
       value={{
+        name,
+        setName,
         setUserToken,
         userToken,
         clientId,

@@ -20,6 +20,7 @@ import useFetchData from "../hooks/useFetchData";
 const CompanyData = () => {
   // context values
   const {
+    name,
     userToken,
     clientId,
     qc1,
@@ -37,6 +38,7 @@ const CompanyData = () => {
     // setCompanyId,
   } = useContext(ResearchContext);
   // state variables
+  const [currentDateWithTime, setCurrentDateWithTime] = useState("");
   const [tableData, setTableData] = useState([]);
   const [error, setError] = useState("");
   const [tableHeaders, setTableHeaders] = useState();
@@ -103,6 +105,7 @@ const CompanyData = () => {
   const fetchTableData = async () => {
     if (companies.length > 0) {
       try {
+        // converting array to string fromat
         const request_data = {
           client_id: clientId,
           company_id: companyId,
@@ -113,12 +116,12 @@ const CompanyData = () => {
           // is_qc2: 0,
           from_datetime: fromDate,
           to_datetime: dateNow,
-          // has_image:"",
-          // has_video:"",
+          has_image: 1,
+          has_video: 0,
           search_text: "",
           // continent: continent,
           // country: country,
-          // language: language,
+          // language: langstoString,
         };
 
         const url = "http://51.68.220.77:8000/listArticlebyQC/";
@@ -130,7 +133,23 @@ const CompanyData = () => {
           },
         });
         if (response) {
-          setTableData(response.data.feed_data);
+          const updatedData = response.data.feed_data.map((item) => {
+            return {
+              ...item,
+              link: (
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                >
+                  Link
+                </a>
+              ),
+            };
+          });
+
+          setTableData(updatedData);
           const localeV = response.data.feed_data;
           setTableHeaders(
             Object.keys(localeV[0]).map((header) =>
@@ -304,20 +323,28 @@ const CompanyData = () => {
       });
     }
   };
-
+  // getting current date with time
+  useEffect(() => {
+    const dateNow = new Date();
+    const formattedDate = dateNow.toISOString().slice(0, 19).replace("T", " ");
+    setCurrentDateWithTime(formattedDate);
+  }, []);
   //posting updated tabledata to database
-
   const handlePostData = async () => {
+    setSavedSuccess(true);
     const data =
       updatedRows.length > 0 &&
       updatedRows?.map((row) => ({
-        social_feed_id: row.social_feed_id,
-        company_id: companyId,
-        reporting_tone: row.reporting_tone,
-        reporting_subject: row.reporting_subject,
-        subcategory: row.subcategory,
-        prominence: row.prominence,
-        detail_summary: row.detail_summary,
+        SOCIALFEEDID: row.social_feed_id,
+        COMPANYID: companyId,
+        KEYWORD: "",
+        REPORTINGTONE: row.reporting_tone,
+        REPORTINGSUBJECT: row.reporting_subject,
+        SUBCATEGORY: row.subcategory,
+        PROMINENCE: row.prominence,
+        DETAILSUMMARY: row.detail_summary,
+        MODIFIEDBY: name,
+        MODIFIEDON: currentDateWithTime,
       }));
     try {
       const url = "http://51.68.220.77:8000/update2database/";
@@ -329,8 +356,7 @@ const CompanyData = () => {
           },
         });
         setUpadatedRows([]);
-        setSavedSuccess(true);
-        setSuccessMessage("Data Saved Successfully!");
+        setSuccessMessage("Data upadated successfully!");
         setSelectedRowData([]);
         // clearing the dd values
         setReportingTone("");
@@ -341,7 +367,9 @@ const CompanyData = () => {
         setSuccessMessage("No data to save.");
       }
     } catch (error) {
-      console.error("Error while saving data:", error);
+      if (error.message === "Network Error") {
+        setSuccessMessage("Please check your internet connection.");
+      }
     }
   };
   // showing success or failure message for the limited time
@@ -349,11 +377,38 @@ const CompanyData = () => {
     if (savedSuccess) {
       const timeoutId = setTimeout(() => {
         setSavedSuccess(false);
+        setSuccessMessage("");
       }, 3000);
 
       return () => clearTimeout(timeoutId);
     }
   }, [savedSuccess]);
+  const highlightSearch = (text) => {
+    if (!text || !searchValue.trim()) {
+      return text;
+    }
+
+    if (typeof text === "string") {
+      if (text.startsWith("<a") && text.endsWith("</a>")) {
+        return text;
+      }
+
+      const regex = new RegExp(`(${searchValue})`, "gi");
+      const parts = text.split(regex);
+
+      return parts.map((part, index) =>
+        regex.test(part) ? (
+          <span key={index} style={{ backgroundColor: "yellow" }}>
+            {part}
+          </span>
+        ) : (
+          part
+        )
+      );
+    }
+
+    return text;
+  };
 
   const renderTableData = () => {
     const dataToRender = searchedData.length > 0 ? searchedData : tableData;
@@ -390,25 +445,6 @@ const CompanyData = () => {
       ))
     ) : (
       <p className="text-red-500 w-screen text-center">No data found.</p>
-    );
-  };
-
-  const highlightSearch = (text) => {
-    if (!text || !searchValue.trim()) {
-      return text;
-    }
-
-    const regex = new RegExp(`(${searchValue})`, "gi");
-    const parts = text.toString().split(regex);
-
-    return parts.map((part, index) =>
-      regex.test(part) ? (
-        <span key={index} style={{ backgroundColor: "yellow" }}>
-          {part}
-        </span>
-      ) : (
-        part
-      )
     );
   };
 
@@ -474,9 +510,13 @@ const CompanyData = () => {
             value={reportingTone}
             onChange={(e) => setReportingTone(e.target.value)}
           >
+            <TextField
+              value={reportingTone}
+              onChange={(e) => setReportingTone(e.target.value)}
+            />
             {reportingTones.map((item) => (
               <MenuItem value={item.value} key={item.value}>
-                {item.value}
+                {item.tonality}
               </MenuItem>
             ))}
           </Select>
