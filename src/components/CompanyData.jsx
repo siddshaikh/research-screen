@@ -39,6 +39,7 @@ const CompanyData = () => {
   } = useContext(ResearchContext);
   // state variables for posting data to database
   const [currentDateWithTime, setCurrentDateWithTime] = useState("");
+  const [postingLoading, setPostingLoading] = useState(false);
 
   const [tableData, setTableData] = useState([]);
   const [error, setError] = useState("");
@@ -312,11 +313,10 @@ const CompanyData = () => {
     setCurrentDateWithTime(formattedDate);
   }, []);
 
-  console.log(userToken);
   //posting updated tabledata to database
-  console.log(updatedRows);
   const handlePostData = async () => {
     setSavedSuccess(true);
+    setPostingLoading(true);
 
     // Check if companyId is a single string and format accordingly
     const formattedCompanyId = Array.isArray(companyId)
@@ -346,6 +346,7 @@ const CompanyData = () => {
           },
         });
         setUpadatedRows([]);
+        setPostingLoading(false);
         setSuccessMessage("Data updated successfully!");
         setSelectedRowData([]);
         // Clearing the dropdown values
@@ -355,10 +356,12 @@ const CompanyData = () => {
         setProminence("");
       } else {
         setSuccessMessage("No data to save.");
+        setPostingLoading(false);
       }
     } catch (error) {
       if (error.message === "Network Error") {
         setSuccessMessage("Please check your internet connection.");
+        setPostingLoading(false);
       }
     }
   };
@@ -461,11 +464,6 @@ const CompanyData = () => {
       }}
     >
       {/* filters for editing the cells */}
-      <Container>
-        {savedSuccess && (
-          <Typography sx={{ color: "green" }}>{successMessage}</Typography>
-        )}
-      </Container>
       <Container
         sx={{
           display: "flex",
@@ -474,7 +472,6 @@ const CompanyData = () => {
           gap: 3,
         }}
       >
-        {/* saved or not */}
         <Container sx={{ display: "flex", alignItems: "center", gap: 3 }}>
           {/* searchfield for the searching tableData */}
           <TextField
@@ -600,34 +597,42 @@ const CompanyData = () => {
       </Container>
       <div className="mt-2 flex items-center justify-center gap-4">
         {" "}
-        <TextField
-          value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
-          InputLabelProps={{ shrink: true }}
-          inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
-          InputProps={{
-            sx: {
-              width: 400,
-              height: "30px",
-              "&:before": { borderBottom: "none" },
-              "&:after": { borderBottom: "none" },
-            },
-          }}
-        />
-        <Button
-          variant="outlined"
-          onClick={handleApplyChanges}
-          sx={{ height: 30, fontSize: "0.8em" }}
-        >
-          Apply
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handlePostData}
-          sx={{ height: 30, fontSize: "0.8em" }}
-        >
-          Save
-        </Button>
+        <div>
+          <TextField
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
+            InputProps={{
+              sx: {
+                width: 400,
+                height: "30px",
+                "&:before": { borderBottom: "none" },
+                "&:after": { borderBottom: "none" },
+              },
+            }}
+          />
+          <Button
+            variant="outlined"
+            onClick={handleApplyChanges}
+            sx={{ height: 30, fontSize: "0.8em", ml: 2 }}
+          >
+            Apply
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handlePostData}
+            sx={{ height: 30, fontSize: "0.8em", ml: 2 }}
+          >
+            {postingLoading ? "Loading..." : "Save"}
+          </Button>
+        </div>
+        {/* saved or not */}
+        <div className="w-1/3">
+          {savedSuccess && (
+            <Typography sx={{ color: "green" }}>{successMessage}</Typography>
+          )}
+        </div>
       </div>
 
       {/* main table */}
