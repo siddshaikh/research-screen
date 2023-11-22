@@ -424,22 +424,37 @@ const CompanyData = () => {
           </TableCell>
 
           {tableHeaders?.map((header) => (
-            <Tooltip
-              key={header}
-              title={rowData[header.toLowerCase().replace(/ /g, "_")]}
-              placement="top"
-              enterDelay={500}
-              leaveDelay={200}
-            >
-              <TableCell className="table-cell">
-                <div className="h-14 overflow-hidden">
-                  {/* Highlighting logic */}
-                  {highlightSearch(
-                    rowData[header.toLowerCase().replace(/ /g, "_")]
-                  )}
-                </div>
-              </TableCell>
-            </Tooltip>
+            <React.Fragment key={header}>
+              {(header === "HEADLINE" ||
+                header === "REPORTING SUBJECT" ||
+                header === "DETAIL SUMMARY") && (
+                <Tooltip
+                  title={rowData[header.toLowerCase().replace(/ /g, "_")]}
+                  placement="top"
+                  enterDelay={500}
+                  leaveDelay={200}
+                >
+                  <TableCell className="table-cell">
+                    <div className="h-14 overflow-hidden">
+                      {highlightSearch(
+                        rowData[header.toLowerCase().replace(/ /g, "_")]
+                      )}
+                    </div>
+                  </TableCell>
+                </Tooltip>
+              )}
+              {header !== "HEADLINE" &&
+                header !== "REPORTING SUBJECT" &&
+                header !== "DETAIL SUMMARY" && (
+                  <TableCell className="table-cell">
+                    <div className="h-14 overflow-hidden">
+                      {highlightSearch(
+                        rowData[header.toLowerCase().replace(/ /g, "_")]
+                      )}
+                    </div>
+                  </TableCell>
+                )}
+            </React.Fragment>
           ))}
         </TableRow>
       ))
