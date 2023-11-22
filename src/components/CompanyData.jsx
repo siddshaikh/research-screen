@@ -37,8 +37,9 @@ const CompanyData = () => {
     // companyId,
     // setCompanyId,
   } = useContext(ResearchContext);
-  // state variables
+  // state variables for posting data to database
   const [currentDateWithTime, setCurrentDateWithTime] = useState("");
+
   const [tableData, setTableData] = useState([]);
   const [error, setError] = useState("");
   const [tableHeaders, setTableHeaders] = useState();
@@ -205,14 +206,17 @@ const CompanyData = () => {
 
   // Function to handle the selection of a row
   const handleRowSelect = (rowData) => {
-    const isSelected = selectedRowData.includes(rowData);
+    setSelectedRowData((prevSelectedRows) => {
+      const isSelected = prevSelectedRows.some((row) => row === rowData);
 
-    setSelectedRowData(
-      isSelected
-        ? selectedRowData.filter((data) => data !== rowData)
-        : [...selectedRowData, rowData]
-    );
+      if (isSelected) {
+        return prevSelectedRows.filter((row) => row !== rowData);
+      } else {
+        return [...prevSelectedRows, rowData];
+      }
+    });
   };
+
   const handleMasterCheckboxChange = () => {
     const allSelected = selectedRowData.length === tableData.length;
 
@@ -280,85 +284,71 @@ const CompanyData = () => {
   //updating tabledata
   const handleApplyChanges = () => {
     if (selectedRowData.length > 0) {
-      setTableData((prevTableData) => {
-        return prevTableData.map((row) => {
-          if (selectedRowData.includes(row)) {
-            return {
-              ...row,
-              reporting_tone: reportingTone || row.reporting_tone,
-              reporting_subject: subject || row.reporting_subject,
-              subcategory: category || row.subcategory,
-              prominence: prominence || row.prominence,
-              detail_summary: editValue || row.detail_summary,
-            };
-          }
-          return row;
-        });
+      const updatedSelectedRows = selectedRowData.map((row) => ({
+        ...row,
+        reporting_tone: reportingTone || row.reporting_tone,
+        reporting_subject: subject || row.reporting_subject,
+        subcategory: category || row.subcategory,
+        prominence: prominence || row.prominence,
+        detail_summary: editValue || row.detail_summary,
+      }));
+
+      const updatedTableData = tableData.map((row) => {
+        const updatedRow = updatedSelectedRows.find(
+          (selectedRow) => selectedRow.social_feed_id === row.social_feed_id
+        );
+        return updatedRow || row;
       });
 
-      setUpadatedRows((prevUpdatedRows) => {
-        const updatedSelectedRows = selectedRowData.map((selectedRow) => {
-          const foundPrevRow = prevUpdatedRows.find(
-            (prevRow) => prevRow === selectedRow
-          );
-          if (foundPrevRow) {
-            return {
-              ...foundPrevRow,
-              reporting_tone: reportingTone || foundPrevRow.reporting_tone,
-              reporting_subject: subject || foundPrevRow.reporting_subject,
-              subcategory: category || foundPrevRow.subcategory,
-              prominence: prominence || foundPrevRow.prominence,
-              detail_summary: editValue || foundPrevRow.detail_summary,
-            };
-          }
-          return selectedRow;
-        });
-
-        return [
-          ...prevUpdatedRows.filter(
-            (prevRow) => !selectedRowData.includes(prevRow)
-          ),
-          ...updatedSelectedRows,
-        ];
-      });
+      setUpadatedRows(updatedSelectedRows);
+      setTableData(updatedTableData);
     }
   };
+
   // getting current date with time
   useEffect(() => {
     const dateNow = new Date();
     const formattedDate = dateNow.toISOString().slice(0, 19).replace("T", " ");
     setCurrentDateWithTime(formattedDate);
   }, []);
+
+  console.log(userToken);
   //posting updated tabledata to database
+  console.log(updatedRows);
   const handlePostData = async () => {
     setSavedSuccess(true);
-    const data =
-      updatedRows.length > 0 &&
-      updatedRows?.map((row) => ({
-        SOCIALFEEDID: row.social_feed_id,
-        COMPANYID: companyId,
-        KEYWORD: "",
-        REPORTINGTONE: row.reporting_tone,
-        REPORTINGSUBJECT: row.reporting_subject,
-        SUBCATEGORY: row.subcategory,
-        PROMINENCE: row.prominence,
-        DETAILSUMMARY: row.detail_summary,
-        MODIFIEDBY: name,
-        MODIFIEDON: currentDateWithTime,
-      }));
+
+    // Check if companyId is a single string and format accordingly
+    const formattedCompanyId = Array.isArray(companyId)
+      ? companyId.map((item) => `'${item}'`).join(",")
+      : companyId.replace(/'/g, "");
+
+    const dataToSend = updatedRows.map((row) => ({
+      COMPANYID: formattedCompanyId,
+      DETAILSUMMARY: row.detail_summary,
+      KEYWORD: "",
+      MODIFIEDBY: name,
+      MODIFIEDON: currentDateWithTime,
+      PROMINENCE: row.prominence,
+      REPORTINGSUBJECT: row.reporting_subject,
+      REPORTINGTONE: row.reporting_tone,
+      SOCIALFEEDID: row.social_feed_id,
+      SUBCATEGORY: row.subcategory,
+    }));
+
     try {
       const url = "http://51.68.220.77:8000/update2database/";
-      if (data.length > 0) {
-        await axios.post(url, data, {
+      if (dataToSend.length > 0) {
+        await axios.post(url, dataToSend, {
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + userToken,
           },
         });
         setUpadatedRows([]);
-        setSuccessMessage("Data upadated successfully!");
+        setSuccessMessage("Data updated successfully!");
         setSelectedRowData([]);
-        // clearing the dd values
+        // Clearing the dropdown values
         setReportingTone("");
         setSubject("");
         setCategory("");
@@ -372,6 +362,7 @@ const CompanyData = () => {
       }
     }
   };
+
   // showing success or failure message for the limited time
   useEffect(() => {
     if (savedSuccess) {
