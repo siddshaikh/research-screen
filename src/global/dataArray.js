@@ -13,7 +13,7 @@ export const qc1Array = [
   {
     id: 3,
     option: "All",
-    value: 2,
+    value: null,
   },
 ];
 

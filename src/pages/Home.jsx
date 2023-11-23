@@ -69,10 +69,10 @@ const Home = () => {
     setFromDate,
     dateNow,
     setDateNow,
-    qc1,
-    setQc1,
-    qc2,
-    setQc2,
+    qc1done,
+    setQc1done,
+    qc2done,
+    setQc2done,
     isImage,
     setIsImage,
     isVideo,
@@ -172,14 +172,11 @@ const Home = () => {
     } = event;
     setDateType(typeof value === "string" ? value.split(",") : value);
   };
-  const handleQc1 = (event) => {
-    setQc1(event.target.value);
+  const handleQc1done = (event) => {
+    setQc1done(event.target.value);
   };
-  const handleQc2 = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setQc2(value);
+  const handleQc2done = (event) => {
+    setQc2done(event.target.value);
   };
   const handleLanguageChange = (event) => {
     setLanguage(event.target.value);
@@ -361,17 +358,12 @@ const Home = () => {
             </InputLabel>
             <Select
               id="qc1-checks"
-              value={qc1}
-              onChange={handleQc1}
               input={<OutlinedInput label="tag" />}
               MenuProps={MenuProps}
               sx={{ height: 30, fontSize: "0.8em" }}
             >
-              {qc1Array.map((item) => (
-                <MenuItem key={item.id} value={item.value}>
-                  {item.option}
-                </MenuItem>
-              ))}
+              <MenuItem>1</MenuItem>
+              <MenuItem>2</MenuItem>
             </Select>
           </FormControl>
           {/* qc2 */}
@@ -380,21 +372,16 @@ const Home = () => {
               id="qc1-select-label"
               sx={{ fontSize: "0.8rem", margin: "-7px" }}
             >
-              QC2
+              QC2 by
             </InputLabel>
             <Select
               id="qc1-checks"
-              value={qc2}
-              onChange={handleQc2}
               input={<OutlinedInput label="tag" />}
               MenuProps={MenuProps}
               sx={{ height: 30, fontSize: "0.8em" }}
             >
-              {qc1Array.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
+              <MenuItem>1</MenuItem>
+              <MenuItem>2</MenuItem>
             </Select>
           </FormControl>
           {/* qc1 done */}
@@ -406,11 +393,18 @@ const Home = () => {
               Isqc1 Done
             </InputLabel>
             <Select
+              id="qc1-checks"
+              value={qc1done}
+              onChange={handleQc1done}
               input={<OutlinedInput label="tag" />}
+              MenuProps={MenuProps}
               sx={{ height: 30, fontSize: "0.8em" }}
             >
-              <MenuItem>Null</MenuItem>
-              <MenuItem>Null</MenuItem>
+              {qc1Array.map((item) => (
+                <MenuItem key={item.id} value={item.value}>
+                  {item.option}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           {/* qc2 done */}
@@ -422,11 +416,18 @@ const Home = () => {
               Isqc2 Done
             </InputLabel>
             <Select
+              id="qc1-checks"
+              value={qc2done}
+              onChange={handleQc2done}
               input={<OutlinedInput label="tag" />}
+              MenuProps={MenuProps}
               sx={{ height: 30, fontSize: "0.8em" }}
             >
-              <MenuItem>Null</MenuItem>
-              <MenuItem>Null</MenuItem>
+              {qc1Array.map((item) => (
+                <MenuItem key={item.id} value={item.value}>
+                  {item.option}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           {/* image checkbox */}

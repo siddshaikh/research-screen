@@ -14,9 +14,9 @@ const ContextProvider = ({ children }) => {
   // data type separate
   const [dateType, setDateType] = useState([]);
   // qc by defaut it will be null
-  const [qc1, setQc1] = useState(0);
+  const [qc1done, setQc1done] = useState(0);
   // qc2
-  const [qc2, setQc2] = useState(0);
+  const [qc2done, setQc2done] = useState(0);
   // image
   const [isImage, setIsImage] = useState(1);
   // video
@@ -61,10 +61,10 @@ const ContextProvider = ({ children }) => {
         setFromDate,
         dateNow,
         setDateNow,
-        qc1,
-        setQc1,
-        qc2,
-        setQc2,
+        qc1done,
+        setQc1done,
+        qc2done,
+        setQc2done,
         isImage,
         setIsImage,
         isVideo,
