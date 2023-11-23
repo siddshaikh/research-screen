@@ -14,13 +14,13 @@ const ContextProvider = ({ children }) => {
   // data type separate
   const [dateType, setDateType] = useState([]);
   // qc by defaut it will be null
-  const [qc1, setQc1] = useState(null);
+  const [qc1, setQc1] = useState(0);
   // qc2
-  const [qc2, setQc2] = useState(null);
+  const [qc2, setQc2] = useState(0);
   // image
-  const [isImage, setIsImage] = useState(false);
+  const [isImage, setIsImage] = useState(1);
   // video
-  const [isvideo, setIsVideo] = useState(false);
+  const [isVideo, setIsVideo] = useState(0);
   // dates
   const [fromDate, setFromDate] = useState(
     new Date().toISOString().slice(0, 16)
@@ -67,7 +67,7 @@ const ContextProvider = ({ children }) => {
         setQc2,
         isImage,
         setIsImage,
-        isvideo,
+        isVideo,
         setIsVideo,
         showTableData,
         setShowTableData,

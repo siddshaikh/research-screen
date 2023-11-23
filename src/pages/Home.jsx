@@ -75,7 +75,7 @@ const Home = () => {
     setQc2,
     isImage,
     setIsImage,
-    isvideo,
+    isVideo,
     setIsVideo,
     setShowTableData,
     dateType,
@@ -98,6 +98,7 @@ const Home = () => {
   useEffect(() => {
     if (clientData.data) {
       setClients(clientData.data.clients);
+      setLanguage([]);
     } else {
       console.log(ClientEror);
     }
@@ -172,10 +173,7 @@ const Home = () => {
     setDateType(typeof value === "string" ? value.split(",") : value);
   };
   const handleQc1 = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setQc1(typeof value === "string" ? value.split(", ") : value);
+    setQc1(event.target.value);
   };
   const handleQc2 = (event) => {
     const {
@@ -366,13 +364,12 @@ const Home = () => {
               value={qc1}
               onChange={handleQc1}
               input={<OutlinedInput label="tag" />}
-              renderValue={(selected) => selected.join(", ")}
               MenuProps={MenuProps}
               sx={{ height: 30, fontSize: "0.8em" }}
             >
-              {qc1Array.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
+              {qc1Array.map((item) => (
+                <MenuItem key={item.id} value={item.value}>
+                  {item.option}
                 </MenuItem>
               ))}
             </Select>
@@ -438,8 +435,11 @@ const Home = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={isImage}
-                    onChange={(e) => setIsImage(e.target.checked)}
+                    checked={isImage === 1}
+                    onChange={() => {
+                      setIsImage(isImage === 1 ? 0 : 1);
+                      setIsVideo(0);
+                    }}
                   />
                 }
                 label={<Typography variant="body2">Image</Typography>}
@@ -452,8 +452,11 @@ const Home = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={isvideo}
-                    onChange={(e) => setIsVideo(e.target.checked)}
+                    checked={isVideo === 1} // Check if isVideo equals 1
+                    onChange={() => {
+                      setIsVideo(isVideo === 1 ? 0 : 1); // Toggle isVideo between 0 and 1
+                      setIsImage(0); // Ensure only one type is displayed at a time
+                    }}
                   />
                 }
                 label={<Typography variant="body2">Video</Typography>}

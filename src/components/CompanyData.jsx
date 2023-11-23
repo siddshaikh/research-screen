@@ -24,6 +24,9 @@ const CompanyData = () => {
     userToken,
     clientId,
     qc1,
+    qc2,
+    isImage,
+    isVideo,
     fromDate,
     dateNow,
     companies,
@@ -37,10 +40,16 @@ const CompanyData = () => {
     // companyId,
     // setCompanyId,
   } = useContext(ResearchContext);
+
   // state variables for posting data to database
   const [currentDateWithTime, setCurrentDateWithTime] = useState("");
   const [postingLoading, setPostingLoading] = useState(false);
+  //  varibale for the fetching the data convert array to string
+  const [langsTostring, setLangsToString] = useState("");
+  const [continentsTostring, setContinentsToString] = useState("");
+  const [countriesToString, setCountriesToString] = useState("");
 
+  // variable for the tableData
   const [tableData, setTableData] = useState([]);
   const [error, setError] = useState("");
   const [tableHeaders, setTableHeaders] = useState();
@@ -102,28 +111,49 @@ const CompanyData = () => {
       setCategories(categoryLists.data.subcategory_list);
     }
   }, [categoryLists]);
-  //summary (editing manually)
+
+  // converting array to the string as a backend requirement
+  const arrayToString = (arr) => {
+    if (Array.isArray(arr)) {
+      if (arr.length > 1) {
+        return '"' + arr.map((item) => `'${item}'`).join(",") + '"';
+      } else {
+        return `"'${arr[0]}'"`;
+      }
+    } else {
+      return `"${arr}"`;
+    }
+  };
+  useEffect(() => {
+    const langsV = arrayToString(language);
+    const continentV = arrayToString(continent);
+    const countriesV = arrayToString(country);
+    setLangsToString(langsV);
+    setContinentsToString(continentV);
+    setCountriesToString(countriesV);
+  }, [language, continent, country]);
   // fetching data basis on the client and company selection
   const fetchTableData = async () => {
+    // converting array to string fromat
+
     if (companies.length > 0) {
       try {
-        // converting array to string fromat
         const request_data = {
           client_id: clientId,
           company_id: companyId,
           date_type: dateType,
-          // qc1_by: qc1,
-          // qc2_by: qc2,
-          // is_qc1: 1,
-          // is_qc2: 0,
+          // qc1_by: "qc1_user",
+          // qc2_by: "qc2_user",
+          is_qc1: qc1,
+          is_qc2: qc2,
           from_datetime: fromDate,
           to_datetime: dateNow,
-          has_image: 1,
-          has_video: 0,
+          has_image: isImage,
+          has_video: isVideo,
           search_text: "",
-          // continent: continent,
-          // country: country,
-          // language: langstoString,
+          // continent: continentsTostring,
+          // country: countriesToString,
+          language: "'en','hn'",
         };
 
         const url = "http://51.68.220.77:8000/listArticlebyQC/";

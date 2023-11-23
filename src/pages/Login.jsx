@@ -36,6 +36,10 @@ function Login() {
       if (res.status === 200) {
         localStorage.setItem("user", res.data.access_token);
         setUserToken(localStorage.getItem("user"));
+        setTimeout(() => {
+          localStorage.removeItem("user");
+          navigate("/login");
+        }, 300000); // 5 minutes in milliseconds
         navigate("/");
       }
     } catch (error) {
@@ -47,6 +51,7 @@ function Login() {
     e.preventDefault();
     authenticateUser();
   };
+
   return (
     <Box
       sx={{

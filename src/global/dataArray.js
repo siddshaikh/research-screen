@@ -1,5 +1,21 @@
 export const dateTypes = ["Article", "Upload"];
-export const qc1Array = ["Yes", "No", "All"];
+export const qc1Array = [
+  {
+    id: 1,
+    option: "Yes",
+    value: 1,
+  },
+  {
+    id: 2,
+    option: "No",
+    value: 0,
+  },
+  {
+    id: 3,
+    option: "All",
+    value: 2,
+  },
+];
 
 export const continents = ["Africa", "Asia", "Europe", "America", "Australia"];
 export const countriesByContinent = [
