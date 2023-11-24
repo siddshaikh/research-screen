@@ -73,6 +73,10 @@ const Home = () => {
     setQc1done,
     qc2done,
     setQc2done,
+    qc1by,
+    setQc1by,
+    qc2by,
+    setQc2by,
     isImage,
     setIsImage,
     isVideo,
@@ -354,16 +358,18 @@ const Home = () => {
               id="qc1-select-label"
               sx={{ fontSize: "0.8rem", margin: "-7px" }}
             >
-              QC1
+              QC1 by
             </InputLabel>
             <Select
               id="qc1-checks"
               input={<OutlinedInput label="tag" />}
               MenuProps={MenuProps}
               sx={{ height: 30, fontSize: "0.8em" }}
+              value={qc1by}
+              onChange={(e) => setQc1by(e.target.value)}
             >
-              <MenuItem>1</MenuItem>
-              <MenuItem>2</MenuItem>
+              <MenuItem value={1}>1</MenuItem>
+              <MenuItem value={2}>2</MenuItem>
             </Select>
           </FormControl>
           {/* qc2 */}
@@ -379,9 +385,11 @@ const Home = () => {
               input={<OutlinedInput label="tag" />}
               MenuProps={MenuProps}
               sx={{ height: 30, fontSize: "0.8em" }}
+              value={qc2by}
+              onChange={(e) => setQc2by(e.target.value)}
             >
-              <MenuItem>1</MenuItem>
-              <MenuItem>2</MenuItem>
+              <MenuItem value={1}>1</MenuItem>
+              <MenuItem value={2}>2</MenuItem>
             </Select>
           </FormControl>
           {/* qc1 done */}

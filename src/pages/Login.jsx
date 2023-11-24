@@ -39,7 +39,7 @@ function Login() {
         setTimeout(() => {
           localStorage.removeItem("user");
           navigate("/login");
-        }, 300000); // 5 minutes in milliseconds  //300000
+        }, 300000); // 5 minutes in millisecond
         navigate("/");
       }
     } catch (error) {

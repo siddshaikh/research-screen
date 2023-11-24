@@ -15,8 +15,12 @@ const ContextProvider = ({ children }) => {
   const [dateType, setDateType] = useState([]);
   // qc by defaut it will be null
   const [qc1done, setQc1done] = useState(0);
-  // qc2
+  // qc2done
   const [qc2done, setQc2done] = useState(0);
+  // qc1by
+  const [qc1by, setQc1by] = useState("");
+  // qc2by
+  const [qc2by, setQc2by] = useState("");
   // image
   const [isImage, setIsImage] = useState(1);
   // video
@@ -65,6 +69,10 @@ const ContextProvider = ({ children }) => {
         setQc1done,
         qc2done,
         setQc2done,
+        qc1by,
+        setQc1by,
+        qc2by,
+        setQc2by,
         isImage,
         setIsImage,
         isVideo,
