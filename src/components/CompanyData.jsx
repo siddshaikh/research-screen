@@ -131,7 +131,6 @@ const CompanyData = () => {
     setCountriesToString(countriesV);
   }, [language, continent, country]);
   // fetching data basis on the client and company selection
-
   const fetchTableData = async () => {
     // converting array to string fromat
     if (companies.length > 0) {
@@ -149,8 +148,8 @@ const CompanyData = () => {
           has_image: isImage,
           has_video: isVideo,
           search_text: "",
-          // continent: continentsTostring,
-          // country: countriesToString,
+          continent: continentsTostring,
+          country: countriesToString,
           language: langsTostring,
         };
 
@@ -189,6 +188,7 @@ const CompanyData = () => {
         }
       } catch (err) {
         setError(err.message);
+        console.log(error);
       }
     }
   };
@@ -240,15 +240,26 @@ const CompanyData = () => {
       if (isSelected) {
         return prevSelectedRows.filter((row) => row !== rowData);
       } else {
-        return [...prevSelectedRows, rowData];
+        if (searchedData.length > 0) {
+          // Check if the selected row is within the searched data
+          if (searchedData.includes(rowData)) {
+            return [...prevSelectedRows, rowData];
+          }
+        } else {
+          return [...prevSelectedRows, rowData];
+        }
       }
+      return prevSelectedRows;
     });
   };
-
   const handleMasterCheckboxChange = () => {
     const allSelected = selectedRowData.length === tableData.length;
 
-    setSelectedRowData(allSelected ? [] : [...tableData]);
+    if (searchedData.length > 0) {
+      setSelectedRowData(allSelected ? [] : [...searchedData]);
+    } else {
+      setSelectedRowData(allSelected ? [] : [...tableData]);
+    }
   };
 
   const handleSort = (clickedHeader) => {

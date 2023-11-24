@@ -131,6 +131,8 @@ const Home = () => {
     setShowTableData,
     companyError,
   ]);
+  //fetching qcusers
+  const { data: qcUserData } = useFetchData(`${base_url}qcuserlist/`);
   //  fetching langueges
   const {
     data: langs,
@@ -372,8 +374,12 @@ const Home = () => {
               value={qc1by}
               onChange={(e) => setQc1by(e.target.value)}
             >
-              <MenuItem value={1}>1</MenuItem>
-              <MenuItem value={2}>2</MenuItem>
+              {qcUserData.data.qc_users.length > 0 &&
+                qcUserData.data.qc_users.map((items) => (
+                  <MenuItem key={items.username} value={items.usersid}>
+                    {items.username}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
           {/* qc2 */}
@@ -392,8 +398,12 @@ const Home = () => {
               value={qc2by}
               onChange={(e) => setQc2by(e.target.value)}
             >
-              <MenuItem value={1}>1</MenuItem>
-              <MenuItem value={2}>2</MenuItem>
+              {qcUserData.data.qc_users.length > 0 &&
+                qcUserData.data.qc_users?.map((items) => (
+                  <MenuItem key={items.username} value={items.usersid}>
+                    {items.username}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
           {/* qc1 done */}
