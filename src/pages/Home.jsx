@@ -59,6 +59,8 @@ const Home = () => {
   const [filteredCountries, setFilteredCountries] = useState([]);
   const navigate = useNavigate();
   const {
+    timerId,
+    setTimerId,
     clientId,
     setClientId,
     company,
@@ -106,7 +108,7 @@ const Home = () => {
     } else {
       console.log(ClientEror);
     }
-  }, [clientData, setClients, ClientEror]);
+  }, [clientData, setClients, ClientEror, setLanguage]);
   // fetching the companies
   const {
     data: companyData,
@@ -171,10 +173,7 @@ const Home = () => {
     setCompanies(value ? value : "");
   };
   const handleDateTypeChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setDateType(typeof value === "string" ? value.split(",") : value);
+    setDateType(event.target.value);
   };
   const handleQc1done = (event) => {
     setQc1done(event.target.value);
@@ -205,6 +204,10 @@ const Home = () => {
     setShowTableData(companies ? true : false);
   };
   const handleLogout = () => {
+    if (timerId) {
+      clearTimeout(timerId);
+      setTimerId(null);
+    }
     localStorage.removeItem("user");
     navigate("/login");
   };
@@ -231,6 +234,7 @@ const Home = () => {
         <Loader />
       ) : (
         <>
+          {/* clients */}
           <FormControl sx={{ m: 1, width: 200 }}>
             <InputLabel
               id="demo-multiple-name-label"

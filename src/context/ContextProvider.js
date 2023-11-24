@@ -5,14 +5,19 @@ const ContextProvider = ({ children }) => {
   //state for the login component
   const [name, setName] = useState("");
   const [userToken, setUserToken] = useState("");
+  // for logout timer
+  const [timerId, setTimerId] = useState(null);
   // clientId for the fetching company
   const [clientId, setClientId] = useState("");
   // company setting when getting clientId from the clients
   const [company, setCompany] = useState([]);
   // selected compnies
   const [companies, setCompanies] = useState([]);
+  // loading state while fetching tableData
+  const [tableFetchLoading, setTableFetchLoading] = useState(false);
+
   // data type separate
-  const [dateType, setDateType] = useState([]);
+  const [dateType, setDateType] = useState("");
   // qc by defaut it will be null
   const [qc1done, setQc1done] = useState(0);
   // qc2done
@@ -55,6 +60,8 @@ const ContextProvider = ({ children }) => {
         setName,
         setUserToken,
         userToken,
+        timerId,
+        setTimerId,
         clientId,
         setClientId,
         company,
@@ -77,6 +84,8 @@ const ContextProvider = ({ children }) => {
         setIsImage,
         isVideo,
         setIsVideo,
+        tableFetchLoading,
+        setTableFetchLoading,
         showTableData,
         setShowTableData,
         dateType,

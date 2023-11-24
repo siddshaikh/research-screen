@@ -37,8 +37,6 @@ const CompanyData = () => {
     continent,
     country,
     language,
-    // companyId,
-    // setCompanyId,
   } = useContext(ResearchContext);
 
   // state variables for posting data to database
@@ -116,12 +114,12 @@ const CompanyData = () => {
   const arrayToString = (arr) => {
     if (Array.isArray(arr)) {
       if (arr.length > 1) {
-        return '"' + arr.map((item) => `'${item}'`).join(",") + '"';
+        return arr.map((item) => `'${item}'`).join(",");
       } else {
-        return `"'${arr[0]}'"`;
+        return `'${arr[0]}'`;
       }
     } else {
-      return `"${arr}"`;
+      return `${arr}`;
     }
   };
   useEffect(() => {
@@ -133,9 +131,9 @@ const CompanyData = () => {
     setCountriesToString(countriesV);
   }, [language, continent, country]);
   // fetching data basis on the client and company selection
+
   const fetchTableData = async () => {
     // converting array to string fromat
-
     if (companies.length > 0) {
       try {
         const request_data = {
@@ -153,7 +151,7 @@ const CompanyData = () => {
           search_text: "",
           // continent: continentsTostring,
           // country: countriesToString,
-          language: "'en','hn'",
+          language: langsTostring,
         };
 
         const url = "http://51.68.220.77:8000/listArticlebyQC/";
@@ -191,7 +189,6 @@ const CompanyData = () => {
         }
       } catch (err) {
         setError(err.message);
-        console.log(error);
       }
     }
   };
@@ -199,7 +196,7 @@ const CompanyData = () => {
   useEffect(() => {
     fetchTableData();
     setShowTableData(false);
-  }, [companyId]);
+  }, [companyId, continentsTostring, countriesToString, langsTostring]);
   // Function to find company id based on selection
   const getCompanyId = (companyData, companyNames) => {
     let companyId = [];

@@ -25,7 +25,8 @@ const StyledButton = styled(Button)(({ theme }) => ({
 function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { name, setName, setUserToken } = useContext(ResearchContext);
+  const { name, setName, setUserToken, setTimerId } =
+    useContext(ResearchContext);
 
   const authenticateUser = async () => {
     try {
@@ -36,10 +37,11 @@ function Login() {
       if (res.status === 200) {
         localStorage.setItem("user", res.data.access_token);
         setUserToken(localStorage.getItem("user"));
-        setTimeout(() => {
+        const timer = setTimeout(() => {
           localStorage.removeItem("user");
           navigate("/login");
         }, 300000); // 5 minutes in millisecond
+        setTimerId(timer);
         navigate("/");
       }
     } catch (error) {
