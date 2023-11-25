@@ -321,7 +321,6 @@ const Home = () => {
               value={dateType}
               onChange={handleDateTypeChange}
               input={<OutlinedInput label="Tag" />}
-              renderValue={(selected) => selected.join(", ")}
               MenuProps={MenuProps}
               sx={{ height: 30, fontSize: "0.8em" }}
             >

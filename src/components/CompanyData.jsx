@@ -143,15 +143,15 @@ const CompanyData = () => {
           client_id: clientId,
           company_id: companyId,
           date_type: dateType,
+          from_date: fromDate,
+          to_date: dateNow,
+          search_text: "",
           qc1_by: qc1String,
           qc2_by: qc2String,
           is_qc1: qc1done,
           is_qc2: qc2done,
-          from_datetime: fromDate,
-          to_datetime: dateNow,
           has_image: isImage,
           has_video: isVideo,
-          search_text: "",
           continent: continentsTostring,
           country: countriesToString,
           language: langsTostring,
@@ -515,15 +515,8 @@ const CompanyData = () => {
       }}
     >
       {/* filters for editing the cells */}
-      <Container
-        sx={{
-          display: "flex",
-          justifyContent: "space-evenly",
-          alignItems: "center",
-          gap: 3,
-        }}
-      >
-        <Container sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+      <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2 ml-2">
           {/* searchfield for the searching tableData */}
           <TextField
             placeholder="Find Text"
@@ -550,87 +543,91 @@ const CompanyData = () => {
           >
             Find
           </Button>
-        </Container>
-
-        {/* dropdowns for separating the files */}
-        {/* reporting tone */}
-        <FormControl sx={{ width: "15rem" }}>
-          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
-            Tone
-          </InputLabel>
-          <Select
-            label="Reporting Tone"
-            sx={{ height: 30, fontSize: "0.8em" }}
-            value={reportingTone}
-            onChange={(e) => setReportingTone(e.target.value)}
-          >
-            <TextField
+        </div>
+        <div className="flex gap-2 items-center">
+          {/* dropdowns for separating the files */}
+          {/* reporting tone */}
+          <FormControl sx={{ width: "10rem" }}>
+            <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
+              Tone
+            </InputLabel>
+            <Select
+              label="Reporting Tone"
+              sx={{ height: 30, fontSize: "0.8em" }}
               value={reportingTone}
               onChange={(e) => setReportingTone(e.target.value)}
-            />
-            {reportingTones.map((item) => (
-              <MenuItem value={item.value} key={item.value}>
-                {item.tonality}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+            >
+              <TextField
+                value={reportingTone}
+                onChange={(e) => setReportingTone(e.target.value)}
+              />
+              {reportingTones.map((item) => (
+                <MenuItem value={item.value} key={item.value}>
+                  {item.tonality}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-        {/* Prominence */}
-        <FormControl sx={{ width: "15rem" }}>
-          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
-            Prominence
-          </InputLabel>
-          <Select
-            label="Prominence"
-            sx={{ height: 30, fontSize: "0.8em" }}
-            value={prominence}
-            onChange={(e) => setProminence(e.target.value)}
-          >
-            {prominences.map((item) => (
-              <MenuItem value={item} key={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+          {/* Prominence */}
+          <FormControl sx={{ width: "10rem" }}>
+            <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
+              Prominence
+            </InputLabel>
+            <Select
+              label="Prominence"
+              sx={{ height: 30, fontSize: "0.8em" }}
+              value={prominence}
+              onChange={(e) => setProminence(e.target.value)}
+            >
+              {prominences.map((item) => (
+                <MenuItem value={item} key={item}>
+                  {item}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-        {/* Reporting subject */}
-        <FormControl sx={{ width: "15rem" }}>
-          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
-            Subject
-          </InputLabel>
-          <Select
-            label="Reporting Subject"
-            sx={{ height: 30, fontSize: "0.8em" }}
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-          >
-            {subjects.map((item) => (
-              <MenuItem key={item} value={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        {/*category */}
-        <FormControl sx={{ width: "15rem" }}>
-          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
-            Category
-          </InputLabel>
-          <Select
-            label="Category"
-            sx={{ height: 30, fontSize: "0.8em" }}
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            {categories.map((item) => (
-              <MenuItem value={item} key={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+          {/* Reporting subject */}
+          <FormControl sx={{ width: "10rem" }}>
+            <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
+              Subject
+            </InputLabel>
+            <Select
+              label="Reporting Subject"
+              sx={{ height: 30, fontSize: "0.8em" }}
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+            >
+              {subjects.map((item) => (
+                <MenuItem key={item} value={item}>
+                  {item}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {/*category */}
+          <FormControl sx={{ width: "10rem" }}>
+            <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
+              Category
+            </InputLabel>
+            <Select
+              label="Category"
+              sx={{ height: 30, fontSize: "0.8em" }}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              {categories.map((item) => (
+                <MenuItem value={item} key={item}>
+                  {item}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+      </div>
+      <div className="mt-2 ml-2 flex items-center gap-4">
+        {" "}
         {/* Details summary */}
         <FormControl sx={{ width: "15rem" }}>
           <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
@@ -645,9 +642,6 @@ const CompanyData = () => {
             <MenuItem value="detail_summary">Summary</MenuItem>
           </Select>
         </FormControl>
-      </Container>
-      <div className="mt-2 flex items-center justify-center gap-4">
-        {" "}
         <div>
           <TextField
             value={editValue}
@@ -679,7 +673,7 @@ const CompanyData = () => {
           </Button>
         </div>
         {/* saved or not */}
-        <div className="w-1/3">
+        <div className="">
           {savedSuccess && (
             <Typography sx={{ color: "green" }}>{successMessage}</Typography>
           )}
