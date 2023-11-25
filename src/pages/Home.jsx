@@ -55,7 +55,8 @@ const Home = () => {
   const [clientName, setClientName] = useState([]);
   //languages from getting an api
   const [languages, setLanguages] = useState([]);
-
+  // qcusers data
+  const [qcUsersData, setQcUsersData] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const navigate = useNavigate();
   const {
@@ -132,7 +133,16 @@ const Home = () => {
     companyError,
   ]);
   //fetching qcusers
-  const { data: qcUserData } = useFetchData(`${base_url}qcuserlist/`);
+  const { data: qcUserData, error: qcUserDataError } = useFetchData(
+    `${base_url}qcuserlist/`
+  );
+  useEffect(() => {
+    if (qcUserData.data) {
+      setQcUsersData(qcUserData.data.qc_users);
+    } else {
+      console.log(qcUserDataError);
+    }
+  }, [qcUserData, qcUserDataError]);
   //  fetching langueges
   const {
     data: langs,
@@ -212,6 +222,8 @@ const Home = () => {
     }
     localStorage.removeItem("user");
     navigate("/login");
+    setQc1by([]);
+    setQc2by([]);
   };
   return (
     <div>
@@ -373,9 +385,10 @@ const Home = () => {
               sx={{ height: 30, fontSize: "0.8em" }}
               value={qc1by}
               onChange={(e) => setQc1by(e.target.value)}
+              multiple
             >
-              {qcUserData.data.qc_users.length > 0 &&
-                qcUserData.data.qc_users.map((items) => (
+              {qcUsersData &&
+                qcUsersData?.map((items) => (
                   <MenuItem key={items.username} value={items.usersid}>
                     {items.username}
                   </MenuItem>
@@ -397,9 +410,10 @@ const Home = () => {
               sx={{ height: 30, fontSize: "0.8em" }}
               value={qc2by}
               onChange={(e) => setQc2by(e.target.value)}
+              multiple
             >
-              {qcUserData.data.qc_users.length > 0 &&
-                qcUserData.data.qc_users?.map((items) => (
+              {qcUsersData &&
+                qcUsersData?.map((items) => (
                   <MenuItem key={items.username} value={items.usersid}>
                     {items.username}
                   </MenuItem>

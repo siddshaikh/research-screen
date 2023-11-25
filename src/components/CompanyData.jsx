@@ -25,6 +25,8 @@ const CompanyData = () => {
     clientId,
     qc1done,
     qc2done,
+    qc1by,
+    qc2by,
     isImage,
     isVideo,
     fromDate,
@@ -133,14 +135,16 @@ const CompanyData = () => {
   // fetching data basis on the client and company selection
   const fetchTableData = async () => {
     // converting array to string fromat
+    const qc1String = `"${qc1by.join(",")}"`;
+    const qc2String = `"${qc2by.join(",")}"`;
     if (companies.length > 0) {
       try {
         const request_data = {
           client_id: clientId,
           company_id: companyId,
           date_type: dateType,
-          // qc1_by: "qc1_user",
-          // qc2_by: "qc2_user",
+          qc1_by: qc1String,
+          qc2_by: qc2String,
           is_qc1: qc1done,
           is_qc2: qc2done,
           from_datetime: fromDate,
@@ -187,6 +191,7 @@ const CompanyData = () => {
           );
         }
       } catch (err) {
+        console.log(err);
         setError(err.message);
         console.log(error);
       }
@@ -196,7 +201,15 @@ const CompanyData = () => {
   useEffect(() => {
     fetchTableData();
     setShowTableData(false);
-  }, [companyId, continentsTostring, countriesToString, langsTostring]);
+  }, [
+    companyId,
+    continentsTostring,
+    countriesToString,
+    langsTostring,
+    qc1by,
+    qc2by,
+  ]);
+  console.log(tableData);
   // Function to find company id based on selection
   const getCompanyId = (companyData, companyNames) => {
     let companyId = [];

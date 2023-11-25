@@ -23,9 +23,9 @@ const ContextProvider = ({ children }) => {
   // qc2done
   const [qc2done, setQc2done] = useState(0);
   // qc1by
-  const [qc1by, setQc1by] = useState("");
+  const [qc1by, setQc1by] = useState([]);
   // qc2by
-  const [qc2by, setQc2by] = useState("");
+  const [qc2by, setQc2by] = useState([]);
   // image
   const [isImage, setIsImage] = useState(1);
   // video
