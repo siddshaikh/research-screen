@@ -22,38 +22,23 @@ const CompanyData = () => {
   const {
     name,
     userToken,
-    clientId,
-    qc1done,
-    qc2done,
-    qc1by,
-    qc2by,
-    isImage,
-    isVideo,
-    fromDate,
-    dateNow,
     companies,
     company,
     showTableData,
-    dateType,
-    setShowTableData,
-    continent,
-    country,
-    language,
+    companyId,
+    setCompanyId,
+    tableData,
+    setTableData,
+    tableHeaders,
   } = useContext(ResearchContext);
 
   // state variables for posting data to database
   const [currentDateWithTime, setCurrentDateWithTime] = useState("");
   const [postingLoading, setPostingLoading] = useState(false);
   //  varibale for the fetching the data convert array to string
-  const [langsTostring, setLangsToString] = useState("");
-  const [continentsTostring, setContinentsToString] = useState("");
-  const [countriesToString, setCountriesToString] = useState("");
 
   // variable for the tableData
-  const [tableData, setTableData] = useState([]);
-  const [error, setError] = useState("");
-  const [tableHeaders, setTableHeaders] = useState();
-  const [companyId, setCompanyId] = useState([]);
+
   // dropdown items (for editing/updating row values)
   const [editRow, setEditRow] = useState("");
   // selectedRowData
@@ -112,104 +97,6 @@ const CompanyData = () => {
     }
   }, [categoryLists]);
 
-  // converting array to the string as a backend requirement
-  const arrayToString = (arr) => {
-    if (Array.isArray(arr)) {
-      if (arr.length > 1) {
-        return arr.map((item) => `'${item}'`).join(",");
-      } else {
-        return `'${arr[0]}'`;
-      }
-    } else {
-      return `${arr}`;
-    }
-  };
-  useEffect(() => {
-    const langsV = arrayToString(language);
-    const continentV = arrayToString(continent);
-    const countriesV = arrayToString(country);
-    setLangsToString(langsV);
-    setContinentsToString(continentV);
-    setCountriesToString(countriesV);
-  }, [language, continent, country]);
-  // fetching data basis on the client and company selection
-  const fetchTableData = async () => {
-    // converting array to string fromat
-    const qc1String = `"${qc1by.join(",")}"`;
-    const qc2String = `"${qc2by.join(",")}"`;
-    if (companies.length > 0) {
-      try {
-        const request_data = {
-          client_id: clientId,
-          company_id: companyId,
-          date_type: dateType,
-          from_date: fromDate,
-          to_date: dateNow,
-          search_text: "",
-          qc1_by: qc1String,
-          qc2_by: qc2String,
-          is_qc1: qc1done,
-          is_qc2: qc2done,
-          has_image: isImage,
-          has_video: isVideo,
-          continent: continentsTostring,
-          country: countriesToString,
-          language: langsTostring,
-        };
-
-        const url = "http://51.68.220.77:8000/listArticlebyQC/";
-
-        const response = await axios.post(url, request_data, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + userToken,
-          },
-        });
-        if (response) {
-          const updatedData = response.data.feed_data.map((item) => {
-            return {
-              ...item,
-              link: (
-                <a
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline"
-                >
-                  Link
-                </a>
-              ),
-            };
-          });
-
-          setTableData(updatedData);
-          const localeV = response.data.feed_data;
-          setTableHeaders(
-            Object.keys(localeV[0]).map((header) =>
-              header.toUpperCase().replace(/_/g, " ")
-            )
-          );
-        }
-      } catch (err) {
-        console.log(err);
-        setError(err.message);
-        console.log(error);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchTableData();
-    setShowTableData(false);
-  }, [
-    companyId,
-    continentsTostring,
-    countriesToString,
-    langsTostring,
-    qc1by,
-    qc2by,
-  ]);
-  console.log(tableData);
   // Function to find company id based on selection
   const getCompanyId = (companyData, companyNames) => {
     let companyId = [];

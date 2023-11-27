@@ -14,7 +14,12 @@ const ContextProvider = ({ children }) => {
   // selected compnies
   const [companies, setCompanies] = useState([]);
   // loading state while fetching tableData
+  const [companyId, setCompanyId] = useState([]);
+  // fetching table data using client and companyid and multiple params
+  const [tableData, setTableData] = useState([]);
   const [tableFetchLoading, setTableFetchLoading] = useState(false);
+  // table headers in uppercase
+  const [tableHeaders, setTableHeaders] = useState([]);
 
   // data type separate
   const [dateType, setDateType] = useState("");
@@ -31,17 +36,22 @@ const ContextProvider = ({ children }) => {
   // video
   const [isVideo, setIsVideo] = useState(0);
   // dates
-  const [fromDate, setFromDate] = useState(
-    new Date().toISOString().slice(0, 16)
-  );
+  const [fromDate, setFromDate] = useState("2023-11-01T00:00");
+  const [dateNow, setDateNow] = useState("2023-11-02T23:59");
+
   useEffect(() => {
     const fromDateObject = new Date(fromDate);
-    const tomorrow = new Date(fromDateObject);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const nextdayIsoString = tomorrow.toISOString().slice(0, 16);
-    setDateNow(nextdayIsoString);
+    const nextDay = new Date(fromDateObject);
+    nextDay.setDate(nextDay.getDate() + 2);
+    nextDay.setHours(23, 59, 59, 999);
+    const toDateStringFormatted = nextDay
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
+
+    setDateNow(toDateStringFormatted);
   }, [fromDate]);
-  const [dateNow, setDateNow] = useState("");
+
   // dates end
   const [showTableData, setShowTableData] = useState(false);
   //languages
@@ -50,8 +60,6 @@ const ContextProvider = ({ children }) => {
   const [continent, setContinent] = useState([]);
   // basis onn the selection of the continent showing th country
   const [country, setCountry] = useState([]);
-  //companyID for getting an a tableData
-  const [companyId, setCompanyId] = useState([]);
 
   return (
     <ResearchContext.Provider
@@ -98,6 +106,10 @@ const ContextProvider = ({ children }) => {
         setCountry,
         companyId,
         setCompanyId,
+        tableData,
+        setTableData,
+        tableHeaders,
+        setTableHeaders,
       }}
     >
       {children}

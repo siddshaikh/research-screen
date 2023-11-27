@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { ResearchContext } from "../context/ContextProvider";
 import useFetchData from "../hooks/useFetchData";
 import Loader from "../components/Loader";
+import axios from "axios";
 
 const ITEM_HEIGHT = 32;
 const ITEM_PADDING_TOP = 4;
@@ -58,6 +59,13 @@ const Home = () => {
   // qcusers data
   const [qcUsersData, setQcUsersData] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
+  // loading state for the tableData fetching
+  const [tableDataLoading, setTableDataLoading] = useState(false);
+  // converting arrays to the string.
+  const [langsTostring, setLangsToString] = useState("");
+  const [continentsTostring, setContinentsToString] = useState("");
+  const [countriesToString, setCountriesToString] = useState("");
+
   const navigate = useNavigate();
   const {
     timerId,
@@ -93,6 +101,10 @@ const Home = () => {
     setContinent,
     country,
     setCountry,
+    companyId,
+    userToken,
+    setTableData,
+    setTableHeaders,
   } = useContext(ResearchContext);
   // base url
   const base_url = process.env.REACT_APP_BASE_URL;
@@ -212,8 +224,85 @@ const Home = () => {
     setContinent(selectedContinent);
     setFilteredCountries(selectedCountries);
   };
-  const handleSearch = () => {
+
+  const arrayToString = (arr) => {
+    if (Array.isArray(arr)) {
+      if (arr.length > 1) {
+        return arr.map((item) => `'${item}'`).join(",");
+      } else {
+        return `'${arr[0]}'`;
+      }
+    } else {
+      return `${arr}`;
+    }
+  };
+  useEffect(() => {
+    const langsV = arrayToString(language);
+    const continentV = arrayToString(continent);
+    const countriesV = arrayToString(country);
+    setLangsToString(langsV);
+    setContinentsToString(continentV);
+    setCountriesToString(countriesV);
+  }, [language, continent, country]);
+  // searching the tabledata using multiple parameters
+  const handleSearch = async () => {
     setShowTableData(companies ? true : false);
+    setTableDataLoading(true);
+    try {
+      const request_data = JSON.stringify({
+        client_id: clientId,
+        company_id: companyId,
+        date_type: dateType,
+        from_date: fromDate,
+        to_date: dateNow,
+        search_text: "",
+        // qc1_by: qc1by.length >1 ? qc1by : null,
+        // qc2_by: qc2by ? qc2by : "",
+        is_qc1: qc1done,
+        is_qc2: qc2done,
+        has_image: isImage,
+        has_video: isVideo,
+        // continent: continentsTostring,
+        // country: countriesToString,
+        language: langsTostring,
+      });
+      const url = "http://51.68.220.77:8000/listArticlebyQC/";
+
+      const response = await axios.post(url, request_data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + userToken,
+        },
+      });
+      if (response) {
+        const updatedData = response.data.feed_data.map((item) => {
+          return {
+            ...item,
+            link: (
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                Link
+              </a>
+            ),
+          };
+        });
+        setTableData(updatedData);
+        const localeV = response.data.feed_data;
+        setTableHeaders(
+          Object.keys(localeV[0]).map((header) =>
+            header.toUpperCase().replace(/_/g, " ")
+          )
+        );
+      }
+      setTableDataLoading(false);
+    } catch (error) {
+      console.log(error);
+      setTableDataLoading(false);
+    }
   };
   const handleLogout = () => {
     if (timerId) {
@@ -388,7 +477,7 @@ const Home = () => {
             >
               {qcUsersData &&
                 qcUsersData?.map((items) => (
-                  <MenuItem key={items.username} value={items.usersid}>
+                  <MenuItem key={items.usersid} value={items.usersid}>
                     {items.username}
                   </MenuItem>
                 ))}
@@ -413,7 +502,7 @@ const Home = () => {
             >
               {qcUsersData &&
                 qcUsersData?.map((items) => (
-                  <MenuItem key={items.username} value={items.usersid}>
+                  <MenuItem key={items.usersid} value={items.usersid}>
                     {items.username}
                   </MenuItem>
                 ))}
@@ -591,17 +680,19 @@ const Home = () => {
           {/* search Button */}
           <Button
             onClick={handleSearch}
-            variant="contain"
             sx={{
               m: 1,
               width: 100,
               height: 30,
-              bgcolor: "gray",
+              bgcolor: tableDataLoading ? "red" : "gray",
               color: "white",
               fontSize: "0.8em",
+              "&:hover": {
+                bgcolor: tableDataLoading ? "red" : "gray",
+              },
             }}
           >
-            Search
+            {tableDataLoading ? "Loading..." : "Search"}
           </Button>
 
           {/* divider */}
