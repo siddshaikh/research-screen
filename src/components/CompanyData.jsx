@@ -244,7 +244,7 @@ const CompanyData = () => {
     }
   };
 
-  // getting current date with time
+  // getting current date with time for the posting data to database
   useEffect(() => {
     const dateNow = new Date();
     const formattedDate = dateNow.toISOString().slice(0, 19).replace("T", " ");
@@ -354,7 +354,6 @@ const CompanyData = () => {
               onChange={() => handleRowSelect(rowData)}
             />
           </TableCell>
-
           {tableHeaders?.map((header) => (
             <React.Fragment key={header}>
               {(header === "HEADLINE" ||
@@ -366,8 +365,8 @@ const CompanyData = () => {
                   enterDelay={500}
                   leaveDelay={200}
                 >
-                  <TableCell className="table-cell">
-                    <div className="h-14 overflow-hidden">
+                  <TableCell>
+                    <div className="h-12 overflow-hidden w-16 text-xs">
                       {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")]
                       )}
@@ -379,7 +378,7 @@ const CompanyData = () => {
                 header !== "REPORTING SUBJECT" &&
                 header !== "DETAIL SUMMARY" && (
                   <TableCell className="table-cell">
-                    <div className="h-14 overflow-hidden">
+                    <div className="h-14 overflow-hidden text-xs">
                       {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")]
                       )}
@@ -568,10 +567,10 @@ const CompanyData = () => {
       </div>
 
       {/* main table */}
-      <div className="mt-4">
+      <div className="mt-4 overflow-scroll h-screen">
         <table>
           <thead>
-            <tr className="sticky top-0 bg-slate-400">
+            <tr className="sticky top-0 bg-red-700">
               {showTableData && (
                 <TableCell>
                   <Checkbox
@@ -588,7 +587,8 @@ const CompanyData = () => {
                     onClick={() =>
                       handleSort(header.toLowerCase().replace(/ /g, "_"))
                     }
-                    sx={{ cursor: "pointer" }}
+                    sx={{ cursor: "pointer", width: 12 }}
+                    className="text-white"
                   >
                     {header}
                   </TableCell>

@@ -33,12 +33,12 @@ input[type="text"] {
   -moz-appearance: none;
 }
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #717784;
-  border-radius: 8px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

@@ -391,6 +391,7 @@ const Home = () => {
             <Select
               labelId="demo-multiple-name-label"
               id="demo-multiple-name"
+              placeholder="select"
               value={clientName}
               onChange={handleChange}
               input={<OutlinedInput label="Name" />}
