@@ -41,11 +41,16 @@ const MenuProps = {
 };
 
 function getStyles(name, clientName, theme) {
+  if (Array.isArray(clientName)) {
+    return {
+      fontWeight:
+        clientName.indexOf(name) === -1
+          ? theme.typography.fontWeightRegular
+          : theme.typography.fontWeightMedium,
+    };
+  }
   return {
-    fontWeight:
-      clientName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
+    fontWeight: theme.typography.fontWeightRegular,
   };
 }
 
@@ -302,6 +307,7 @@ const Home = () => {
     } catch (error) {
       console.log(error);
       setTableDataLoading(false);
+      setTableData([]);
     }
   };
   const handleLogout = () => {
@@ -415,11 +421,11 @@ const Home = () => {
             >
               {dateTypes.map((dateType) => (
                 <MenuItem
-                  key={dateType}
-                  value={dateType}
+                  key={dateType.id}
+                  value={dateType.value}
                   style={getStyles(dateType, dateType, theme)}
                 >
-                  {dateType}
+                  {dateType.title}
                 </MenuItem>
               ))}
             </Select>

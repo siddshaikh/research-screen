@@ -1,4 +1,7 @@
-export const dateTypes = ["Article", "Upload"];
+export const dateTypes = [
+  { id: 1, title: "Article", value: "article" },
+  { id: 2, title: "Upload", value: "upload" },
+];
 export const qc1Array = [
   {
     id: 1,
