@@ -70,6 +70,8 @@ const Home = () => {
   const [langsTostring, setLangsToString] = useState("");
   const [continentsTostring, setContinentsToString] = useState("");
   const [countriesToString, setCountriesToString] = useState("");
+  const [qc1byuserToString, setQc1byuserToString] = useState("");
+  const [qc2byuserToString, setQc2byuserToString] = useState("");
 
   const navigate = useNavigate();
   const {
@@ -232,48 +234,83 @@ const Home = () => {
 
   const arrayToString = (arr) => {
     if (Array.isArray(arr)) {
-      if (arr.length > 1) {
+      if (arr.length > 0) {
         return arr.map((item) => `'${item}'`).join(",");
       } else {
-        return `'${arr[0]}'`;
+        return "";
       }
     } else {
-      return `${arr}`;
+      return "";
     }
   };
   useEffect(() => {
     const langsV = arrayToString(language);
     const continentV = arrayToString(continent);
     const countriesV = arrayToString(country);
+    const qc1_userV = arrayToString(qc1by);
+    const qc2_userV = arrayToString(qc2by);
     setLangsToString(langsV);
     setContinentsToString(continentV);
     setCountriesToString(countriesV);
-  }, [language, continent, country]);
+    setQc1byuserToString(qc1_userV);
+    setQc2byuserToString(qc2_userV);
+  }, [language, continent, country, qc1by, qc2by]);
   // searching the tabledata using multiple parameters
   const handleSearch = async () => {
     setShowTableData(companies ? true : false);
     setTableDataLoading(true);
+
     try {
-      const request_data = JSON.stringify({
+      let requestData = {
         client_id: clientId,
-        company_id: companyId,
+        // company_id: "'690','GOOGLE_AND','1222'", //optional using condition
         date_type: dateType,
         from_date: fromDate,
         to_date: dateNow,
         search_text: "",
-        // qc1_by: qc1by.length >1 ? qc1by : null,
-        // qc2_by: qc2by ? qc2by : "",
+        // qc1_by: "qc1_user", //optional using condition
+        // qc2_by: "qc2_user", //optional using condition
         is_qc1: qc1done,
         is_qc2: qc2done,
         has_image: isImage,
         has_video: isVideo,
-        // continent: continentsTostring,
-        // country: countriesToString,
-        language: langsTostring,
-      });
+        // continent: "Asia", //optional using condition
+        // country: "India",  //optional using condition
+        // language: langsTostring, //optional using condition
+      };
+
+      function addPropertyIfConditionIsTrue(condition, property, value) {
+        if (condition) {
+          requestData[property] = value;
+        }
+      }
+      addPropertyIfConditionIsTrue(companyId, "company_id", companyId);
+      addPropertyIfConditionIsTrue(
+        qc1byuserToString,
+        "qc1_by",
+        qc1byuserToString
+      );
+      addPropertyIfConditionIsTrue(
+        qc2byuserToString,
+        "qc2_by",
+        qc2byuserToString
+      );
+      addPropertyIfConditionIsTrue(
+        continentsTostring,
+        "continent",
+        continentsTostring
+      );
+      addPropertyIfConditionIsTrue(
+        countriesToString,
+        "country",
+        countriesToString
+      );
+      addPropertyIfConditionIsTrue(langsTostring, "language", langsTostring);
+
+      const requestDataJSON = JSON.stringify(requestData);
       const url = "http://51.68.220.77:8000/listArticlebyQC/";
 
-      const response = await axios.post(url, request_data, {
+      const response = await axios.post(url, requestDataJSON, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + userToken,

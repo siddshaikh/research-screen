@@ -560,7 +560,7 @@ const CompanyData = () => {
           </Button>
         </div>
         {/* saved or not */}
-        <div className="">
+        <div>
           {savedSuccess && (
             <Typography sx={{ color: "green" }}>{successMessage}</Typography>
           )}
