@@ -587,7 +587,11 @@ const CompanyData = () => {
                     onClick={() =>
                       handleSort(header.toLowerCase().replace(/ /g, "_"))
                     }
-                    sx={{ cursor: "pointer", width: 12 }}
+                    sx={{
+                      cursor: "pointer",
+                      fontSize: "12px",
+                      letterSpacing: "2px",
+                    }}
                     className="text-white"
                   >
                     {header}
