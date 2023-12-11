@@ -73,6 +73,8 @@ const ContextProvider = ({ children }) => {
   const [continent, setContinent] = useState([]);
   // basis onn the selection of the continent showing th country
   const [country, setCountry] = useState([]);
+  // if user forgot the save the data after apply changes in  table
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
 
   return (
     <ResearchContext.Provider
@@ -125,6 +127,9 @@ const ContextProvider = ({ children }) => {
         setTableData,
         tableHeaders,
         setTableHeaders,
+        // data saved or not
+        unsavedChanges,
+        setUnsavedChanges,
       }}
     >
       {children}

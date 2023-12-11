@@ -30,6 +30,7 @@ const CompanyData = () => {
     tableData,
     setTableData,
     tableHeaders,
+    setUnsavedChanges,
   } = useContext(ResearchContext);
 
   // state variables for posting data to database
@@ -223,6 +224,7 @@ const CompanyData = () => {
   //updating tabledata
   const handleApplyChanges = () => {
     if (selectedRowData.length > 0) {
+      setUnsavedChanges(true);
       const updatedSelectedRows = selectedRowData.map((row) => ({
         ...row,
         reporting_tone: reportingTone || row.reporting_tone,
@@ -292,6 +294,7 @@ const CompanyData = () => {
         setSubject("");
         setCategory("");
         setProminence("");
+        setUnsavedChanges(false);
       } else {
         setSuccessMessage("No data to save.");
         setPostingLoading(false);
@@ -345,9 +348,9 @@ const CompanyData = () => {
   const renderTableData = () => {
     const dataToRender = searchedData.length > 0 ? searchedData : tableData;
 
-    return tableData.length && showTableData ? (
+    return tableData.length > 0 && showTableData ? (
       dataToRender.map((rowData, rowIndex) => (
-        <TableRow key={rowIndex}>
+        <TableRow key={rowIndex} sx={{ overflow: "hidden" }}>
           <TableCell>
             <Checkbox
               checked={selectedRowData.includes(rowData)}
@@ -391,13 +394,16 @@ const CompanyData = () => {
       ))
     ) : (
       <table className="w-screen border border-gray-500 h-screen">
-        <thead className="bg-red-700">
+        <thead className="bg-gray-700">
           <tr>
             <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500">
-              Header 1
+              1
             </th>
             <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500">
-              Header 2
+              2
+            </th>
+            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500">
+              3
             </th>
           </tr>
         </thead>
@@ -542,13 +548,9 @@ const CompanyData = () => {
         {" "}
         {/* Details summary */}
         <FormControl sx={{ width: "15rem" }}>
-          <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
-            Select Row
-          </InputLabel>
           <Select
-            value={editValue}
+            value={editRow}
             onChange={(e) => setEditRow(e.target.value)}
-            label="Select Row"
             sx={{ height: 30, fontSize: "0.8em" }}
           >
             <MenuItem value="detail_summary" sx={{ fontSize: "0.8em" }}>
@@ -621,9 +623,15 @@ const CompanyData = () => {
                       fontSize: "15px",
                       letterSpacing: "2px",
                     }}
-                    className="text-gray-200 font-bold"
+                    className={`text-gray-200 font-bold `}
                   >
-                    {header}
+                    {header === "REPORTING TONE"
+                      ? "REPORT-TONE"
+                      : header && header === "REPORTING SUBJECT"
+                      ? "REPORT-SUB"
+                      : header && header === "SUBCATEGORY"
+                      ? "SUBCATE"
+                      : header}
                   </TableCell>
                 ))}
             </tr>

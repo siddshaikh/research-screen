@@ -11,7 +11,6 @@ import {
   Divider,
   FormControlLabel,
   FormGroup,
-  ListItemText,
   TextField,
   Typography,
 } from "@mui/material";
@@ -27,6 +26,7 @@ import { ResearchContext } from "../context/ContextProvider";
 import useFetchData from "../hooks/useFetchData";
 import Loader from "../components/Loader";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const ITEM_HEIGHT = 32;
 const ITEM_PADDING_TOP = 4;
@@ -114,6 +114,9 @@ const Home = () => {
     userToken,
     setTableData,
     setTableHeaders,
+    // data saved or not
+    unsavedChanges,
+    setUnsavedChanges,
   } = useContext(ResearchContext);
   // base url
   const base_url = process.env.REACT_APP_BASE_URL;
@@ -141,6 +144,7 @@ const Home = () => {
     if (clientId || companyData.data) {
       setCompany(companyData?.data?.companies || []);
       setCompanies([]);
+      setUnsavedChanges(false);
       setShowTableData(false);
     } else {
       console.log(companyError);
@@ -152,6 +156,7 @@ const Home = () => {
     setCompanies,
     setShowTableData,
     companyError,
+    setUnsavedChanges,
   ]);
   //fetching qcusers
   const { data: qcUserData, error: qcUserDataError } = useFetchData(
@@ -259,94 +264,106 @@ const Home = () => {
   }, [language, continent, country, qc1by, qc2by]);
   // searching the tabledata using multiple parameters
   const handleSearch = async () => {
-    setShowTableData(companies ? true : false);
-    setTableDataLoading(true);
+    if (clientId) {
+      if (unsavedChanges) {
+        toast.error("You might be missing to save");
+      } else {
+        setShowTableData(companies ? true : false);
+        setTableDataLoading(true);
 
-    try {
-      let requestData = {
-        client_id: clientId,
-        // company_id: "'690','GOOGLE_AND','1222'", //optional using condition
-        date_type: dateType,
-        from_date: fromDate,
-        to_date: dateNow,
-        search_text: searchValue, //optional
-        // qc1_by: "qc1_user", //optional using condition
-        // qc2_by: "qc2_user", //optional using condition
-        is_qc1: qc1done,
-        is_qc2: qc2done,
-        has_image: isImage,
-        has_video: isVideo,
-        // continent: "Asia", //optional using condition
-        // country: "India",  //optional using condition
-        // language: langsTostring, //optional using condition
-      };
+        try {
+          let requestData = {
+            client_id: clientId,
+            // company_id: "'690','GOOGLE_AND','1222'", //optional using condition
+            date_type: dateType,
+            from_date: fromDate,
+            to_date: dateNow,
+            search_text: searchValue, //optional
+            // qc1_by: "qc1_user", //optional using condition
+            // qc2_by: "qc2_user", //optional using condition
+            is_qc1: qc1done,
+            is_qc2: qc2done,
+            has_image: isImage,
+            has_video: isVideo,
+            // continent: "Asia", //optional using condition
+            // country: "India",  //optional using condition
+            // language: langsTostring, //optional using condition
+          };
 
-      function addPropertyIfConditionIsTrue(condition, property, value) {
-        if (condition) {
-          requestData[property] = value;
+          function addPropertyIfConditionIsTrue(condition, property, value) {
+            if (condition) {
+              requestData[property] = value;
+            }
+          }
+          addPropertyIfConditionIsTrue(companyId, "company_id", companyId);
+          addPropertyIfConditionIsTrue(
+            qc1byuserToString,
+            "qc1_by",
+            qc1byuserToString
+          );
+          addPropertyIfConditionIsTrue(
+            qc2byuserToString,
+            "qc2_by",
+            qc2byuserToString
+          );
+          addPropertyIfConditionIsTrue(
+            continentsTostring,
+            "continent",
+            continentsTostring
+          );
+          addPropertyIfConditionIsTrue(
+            countriesToString,
+            "country",
+            countriesToString
+          );
+          addPropertyIfConditionIsTrue(
+            langsTostring,
+            "language",
+            langsTostring
+          );
+
+          const requestDataJSON = JSON.stringify(requestData);
+          const url = "http://51.68.220.77:8000/listArticlebyQC/";
+
+          const response = await axios.post(url, requestDataJSON, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + userToken,
+            },
+          });
+          if (response) {
+            const updatedData = response.data.feed_data.map((item) => {
+              return {
+                ...item,
+                link: (
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                  >
+                    Link
+                  </a>
+                ),
+              };
+            });
+            setTableData(updatedData);
+            const localeV = response.data.feed_data;
+            setTableHeaders(
+              Object.keys(localeV[0]).map((header) =>
+                header.toUpperCase().replace(/_/g, " ")
+              )
+            );
+          }
+          setTableDataLoading(false);
+        } catch (error) {
+          console.log(error);
+          setTableDataLoading(false);
+          setTableData([]);
         }
       }
-      addPropertyIfConditionIsTrue(companyId, "company_id", companyId);
-      addPropertyIfConditionIsTrue(
-        qc1byuserToString,
-        "qc1_by",
-        qc1byuserToString
-      );
-      addPropertyIfConditionIsTrue(
-        qc2byuserToString,
-        "qc2_by",
-        qc2byuserToString
-      );
-      addPropertyIfConditionIsTrue(
-        continentsTostring,
-        "continent",
-        continentsTostring
-      );
-      addPropertyIfConditionIsTrue(
-        countriesToString,
-        "country",
-        countriesToString
-      );
-      addPropertyIfConditionIsTrue(langsTostring, "language", langsTostring);
-
-      const requestDataJSON = JSON.stringify(requestData);
-      const url = "http://51.68.220.77:8000/listArticlebyQC/";
-
-      const response = await axios.post(url, requestDataJSON, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + userToken,
-        },
-      });
-      if (response) {
-        const updatedData = response.data.feed_data.map((item) => {
-          return {
-            ...item,
-            link: (
-              <a
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline"
-              >
-                Link
-              </a>
-            ),
-          };
-        });
-        setTableData(updatedData);
-        const localeV = response.data.feed_data;
-        setTableHeaders(
-          Object.keys(localeV[0]).map((header) =>
-            header.toUpperCase().replace(/_/g, " ")
-          )
-        );
-      }
-      setTableDataLoading(false);
-    } catch (error) {
-      console.log(error);
-      setTableDataLoading(false);
-      setTableData([]);
+    } else {
+      toast.warn("Please select a client.");
     }
   };
   const handleLogout = () => {
@@ -358,6 +375,8 @@ const Home = () => {
     navigate("/login");
     setQc1by([]);
     setQc2by([]);
+    setClientId("");
+    setUnsavedChanges(false);
   };
   return (
     <div>
