@@ -99,6 +99,8 @@ const Home = () => {
     setIsImage,
     isVideo,
     setIsVideo,
+    searchValue,
+    setSearchValue,
     setShowTableData,
     dateType,
     setDateType,
@@ -267,7 +269,7 @@ const Home = () => {
         date_type: dateType,
         from_date: fromDate,
         to_date: dateNow,
-        search_text: "",
+        search_text: searchValue, //optional
         // qc1_by: "qc1_user", //optional using condition
         // qc2_by: "qc2_user", //optional using condition
         is_qc1: qc1done,
@@ -404,6 +406,7 @@ const Home = () => {
                     key={client.clientid}
                     value={client.clientname}
                     style={getStyles(client.clientname, clientName, theme)}
+                    sx={{ fontSize: "0.8em" }}
                   >
                     {client.clientname}
                   </MenuItem>
@@ -434,8 +437,9 @@ const Home = () => {
                   <MenuItem
                     key={companyItem.companyid}
                     value={companyItem.companyname}
+                    sx={{ fontSize: "0.8em" }}
                   >
-                    <ListItemText primary={companyItem.companyname} />
+                    {companyItem.companyname}
                   </MenuItem>
                 ))}
             </Select>
@@ -462,6 +466,7 @@ const Home = () => {
                   key={dateType.id}
                   value={dateType.value}
                   style={getStyles(dateType, dateType, theme)}
+                  sx={{ fontSize: "0.8em" }}
                 >
                   {dateType.title}
                 </MenuItem>
@@ -521,7 +526,11 @@ const Home = () => {
             >
               {qcUsersData &&
                 qcUsersData?.map((items) => (
-                  <MenuItem key={items.usersid} value={items.usersid}>
+                  <MenuItem
+                    key={items.usersid}
+                    value={items.usersid}
+                    sx={{ fontSize: "0.8em" }}
+                  >
                     {items.username}
                   </MenuItem>
                 ))}
@@ -546,7 +555,11 @@ const Home = () => {
             >
               {qcUsersData &&
                 qcUsersData?.map((items) => (
-                  <MenuItem key={items.usersid} value={items.usersid}>
+                  <MenuItem
+                    key={items.usersid}
+                    value={items.usersid}
+                    sx={{ fontSize: "0.8em" }}
+                  >
                     {items.username}
                   </MenuItem>
                 ))}
@@ -569,7 +582,11 @@ const Home = () => {
               sx={{ height: 30, fontSize: "0.8em" }}
             >
               {qc1Array.map((item) => (
-                <MenuItem key={item.id} value={item.value}>
+                <MenuItem
+                  key={item.id}
+                  value={item.value}
+                  sx={{ fontSize: "0.8em" }}
+                >
                   {item.option}
                 </MenuItem>
               ))}
@@ -592,7 +609,11 @@ const Home = () => {
               sx={{ height: 30, fontSize: "0.8em" }}
             >
               {qc1Array.map((item) => (
-                <MenuItem key={item.id} value={item.value}>
+                <MenuItem
+                  key={item.id}
+                  value={item.value}
+                  sx={{ fontSize: "0.8em" }}
+                >
                   {item.option}
                 </MenuItem>
               ))}
@@ -607,7 +628,6 @@ const Home = () => {
                     checked={isImage === 1}
                     onChange={() => {
                       setIsImage(isImage === 1 ? 0 : 1);
-                      setIsVideo(0);
                     }}
                   />
                 }
@@ -624,7 +644,6 @@ const Home = () => {
                     checked={isVideo === 1} // Check if isVideo equals 1
                     onChange={() => {
                       setIsVideo(isVideo === 1 ? 0 : 1); // Toggle isVideo between 0 and 1
-                      setIsImage(0); // Ensure only one type is displayed at a time
                     }}
                   />
                 }
@@ -645,6 +664,8 @@ const Home = () => {
                   "&:after": { borderBottom: "none" },
                 },
               }}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
             />
           </FormControl>
 
@@ -666,7 +687,11 @@ const Home = () => {
               sx={{ height: 30, fontSize: "0.8em" }}
             >
               {Object.entries(languages).map(([languagename, languagecode]) => (
-                <MenuItem key={languagecode} value={languagecode}>
+                <MenuItem
+                  key={languagecode}
+                  value={languagecode}
+                  sx={{ fontSize: "0.8em" }}
+                >
                   {languagename}
                 </MenuItem>
               ))}
@@ -691,7 +716,11 @@ const Home = () => {
               multiple
             >
               {continents.map((continent) => (
-                <MenuItem key={continent} value={continent}>
+                <MenuItem
+                  key={continent}
+                  value={continent}
+                  sx={{ fontSize: "0.8em" }}
+                >
                   {continent}
                 </MenuItem>
               ))}
@@ -715,7 +744,11 @@ const Home = () => {
               sx={{ height: 30, fontSize: "0.8em" }}
             >
               {filteredCountries.map((country) => (
-                <MenuItem key={country} value={country}>
+                <MenuItem
+                  key={country}
+                  value={country}
+                  sx={{ fontSize: "0.8em" }}
+                >
                   {country}
                 </MenuItem>
               ))}

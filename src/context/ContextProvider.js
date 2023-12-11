@@ -22,7 +22,7 @@ const ContextProvider = ({ children }) => {
   const [tableHeaders, setTableHeaders] = useState([]);
 
   // data type separate
-  const [dateType, setDateType] = useState("");
+  const [dateType, setDateType] = useState("article");
   // qc by defaut it will be null
   const [qc1done, setQc1done] = useState(0);
   // qc2done
@@ -35,9 +35,22 @@ const ContextProvider = ({ children }) => {
   const [isImage, setIsImage] = useState(1);
   // video
   const [isVideo, setIsVideo] = useState(0);
+  // search text
+  const [searchValue, setSearchValue] = useState("");
   // dates
-  const [fromDate, setFromDate] = useState("2023-11-01T00:00");
-  const [dateNow, setDateNow] = useState("2023-11-02T23:59");
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+  const day = String(currentDate.getDate()).padStart(2, "0");
+  const hours = String(currentDate.getHours()).padStart(2, "0");
+  const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+  const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+
+  const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+  const [fromDate, setFromDate] = useState(formattedDate);
+
+  const [dateNow, setDateNow] = useState("");
 
   useEffect(() => {
     const fromDateObject = new Date(fromDate);
@@ -92,6 +105,8 @@ const ContextProvider = ({ children }) => {
         setIsImage,
         isVideo,
         setIsVideo,
+        searchValue,
+        setSearchValue,
         tableFetchLoading,
         setTableFetchLoading,
         showTableData,

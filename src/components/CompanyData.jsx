@@ -365,8 +365,8 @@ const CompanyData = () => {
                   enterDelay={500}
                   leaveDelay={200}
                 >
-                  <TableCell>
-                    <div className="h-12 overflow-hidden w-16 text-xs">
+                  <TableCell size="small">
+                    <div className="h-8 overflow-hidden w-10 text-xs">
                       {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")]
                       )}
@@ -377,7 +377,7 @@ const CompanyData = () => {
               {header !== "HEADLINE" &&
                 header !== "REPORTING SUBJECT" &&
                 header !== "DETAIL SUMMARY" && (
-                  <TableCell className="table-cell">
+                  <TableCell className="table-cell" size="small">
                     <div className="h-14 overflow-hidden text-xs">
                       {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")]
@@ -390,7 +390,29 @@ const CompanyData = () => {
         </TableRow>
       ))
     ) : (
-      <p className="text-red-500 w-screen text-center">No data found.</p>
+      <table className="w-screen border border-gray-500 h-screen">
+        <thead className="bg-red-700">
+          <tr>
+            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500">
+              Header 1
+            </th>
+            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500">
+              Header 2
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* No data row */}
+          <tr>
+            <td
+              className="py-4 text-xs text-gray-500 text-center border-b border-gray-500"
+              colSpan="2"
+            >
+              No data found
+            </td>
+          </tr>
+        </tbody>
+      </table>
     );
   };
 
@@ -448,7 +470,11 @@ const CompanyData = () => {
                 onChange={(e) => setReportingTone(e.target.value)}
               />
               {reportingTones.map((item) => (
-                <MenuItem value={item.value} key={item.value}>
+                <MenuItem
+                  value={item.value}
+                  key={item.value}
+                  sx={{ fontSize: "0.8em" }}
+                >
                   {item.tonality}
                 </MenuItem>
               ))}
@@ -467,7 +493,7 @@ const CompanyData = () => {
               onChange={(e) => setProminence(e.target.value)}
             >
               {prominences.map((item) => (
-                <MenuItem value={item} key={item}>
+                <MenuItem value={item} key={item} sx={{ fontSize: "0.8em" }}>
                   {item}
                 </MenuItem>
               ))}
@@ -486,7 +512,7 @@ const CompanyData = () => {
               onChange={(e) => setSubject(e.target.value)}
             >
               {subjects.map((item) => (
-                <MenuItem key={item} value={item}>
+                <MenuItem key={item} value={item} sx={{ fontSize: "0.8em" }}>
                   {item}
                 </MenuItem>
               ))}
@@ -504,7 +530,7 @@ const CompanyData = () => {
               onChange={(e) => setCategory(e.target.value)}
             >
               {categories.map((item) => (
-                <MenuItem value={item} key={item}>
+                <MenuItem value={item} key={item} sx={{ fontSize: "0.8em" }}>
                   {item}
                 </MenuItem>
               ))}
@@ -525,7 +551,9 @@ const CompanyData = () => {
             label="Select Row"
             sx={{ height: 30, fontSize: "0.8em" }}
           >
-            <MenuItem value="detail_summary">Summary</MenuItem>
+            <MenuItem value="detail_summary" sx={{ fontSize: "0.8em" }}>
+              Summary
+            </MenuItem>
           </Select>
         </FormControl>
         <div>
@@ -572,7 +600,7 @@ const CompanyData = () => {
           <thead>
             <tr className="sticky top-0 bg-red-700">
               {showTableData && (
-                <TableCell>
+                <TableCell size="small">
                   <Checkbox
                     checked={selectedRowData.length === tableData.length}
                     onChange={handleMasterCheckboxChange}
@@ -584,15 +612,16 @@ const CompanyData = () => {
                 tableHeaders?.map((header) => (
                   <TableCell
                     key={header}
+                    size="small"
                     onClick={() =>
                       handleSort(header.toLowerCase().replace(/ /g, "_"))
                     }
                     sx={{
                       cursor: "pointer",
-                      fontSize: "12px",
+                      fontSize: "15px",
                       letterSpacing: "2px",
                     }}
-                    className="text-white"
+                    className="text-gray-200 font-bold"
                   >
                     {header}
                   </TableCell>

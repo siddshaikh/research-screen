@@ -7,6 +7,8 @@ import { useContext, useEffect } from "react";
 import { ResearchContext } from "./context/ContextProvider";
 import NotFound from "./components/NotFound";
 import { checkUserAuthenticate } from "./auth/auth";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const { userToken, setUserToken } = useContext(ResearchContext);
@@ -17,6 +19,7 @@ function App() {
     <div className="App">
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <ToastContainer />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={userToken ? <Home /> : <Login />} />

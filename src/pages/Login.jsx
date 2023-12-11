@@ -5,6 +5,7 @@ import { css } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ResearchContext } from "../context/ContextProvider";
+import { toast } from "react-toastify";
 
 const loginFormStyles = css`
   display: flex;
@@ -23,7 +24,6 @@ const StyledButton = styled(Button)(({ theme }) => ({
 
 function Login() {
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
   const { name, setName, setUserToken, setTimerId } =
     useContext(ResearchContext);
@@ -40,12 +40,12 @@ function Login() {
         const timer = setTimeout(() => {
           localStorage.removeItem("user");
           navigate("/login");
-        }, 300000); // 5 minutes in millisecond
+        }, 30 * 60 * 1000); // 30 minutes in millisecond
         setTimerId(timer);
         navigate("/");
       }
     } catch (error) {
-      setError("Something Went Wrong Please Try again.");
+      toast.error(error.message);
     }
   };
   const handleSubmit = (e) => {
@@ -66,7 +66,6 @@ function Login() {
         <Typography variant="h5" gutterBottom>
           Login
         </Typography>
-        <Typography sx={{ color: "red" }}>{error && error}</Typography>
         <form css={loginFormStyles} onSubmit={handleSubmit}>
           <TextField
             label="Name"

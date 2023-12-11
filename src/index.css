@@ -25,12 +25,12 @@ input[type="text"] {
   -moz-appearance: none;
 }
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #717784;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
