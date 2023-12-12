@@ -125,7 +125,7 @@ const Home = () => {
     data: clientData,
     error: ClientEror,
     loading: clientLoading,
-  } = useFetchData(`${base_url}clientlist/`);
+  } = useFetchData(`${base_url}clientlist/`, clients);
   useEffect(() => {
     if (clientData.data) {
       setClients(clientData.data.clients);
@@ -212,6 +212,33 @@ const Home = () => {
   };
   const handleDateTypeChange = (event) => {
     setDateType(event.target.value);
+  };
+  const handleFromDate = (e) => {
+    const { value } = e.target;
+
+    if (value) {
+      const date = new Date(value); // Creating a Date object from the value
+      if (!isNaN(date.getTime())) {
+        const formattedValue = date
+          .toISOString()
+          .slice(0, 16)
+          .replace("T", " ");
+        setFromDate(formattedValue);
+      }
+    }
+  };
+  const handleToDate = (e) => {
+    const { value } = e.target;
+    if (value) {
+      const date = new Date(value); // Creating a Date object from the value
+      if (!isNaN(date.getTime())) {
+        const formattedValue = date
+          .toISOString()
+          .slice(0, 16)
+          .replace("T", " ");
+        setDateNow(formattedValue);
+      }
+    }
   };
   const handleQc1done = (event) => {
     setQc1done(event.target.value);
@@ -324,7 +351,6 @@ const Home = () => {
 
           const requestDataJSON = JSON.stringify(requestData);
           const url = "http://51.68.220.77:8000/listArticlebyQC/";
-
           const response = await axios.post(url, requestDataJSON, {
             headers: {
               "Content-Type": "application/json",
@@ -497,7 +523,7 @@ const Home = () => {
             <TextField
               type="datetime-local"
               value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
+              onChange={handleFromDate}
               InputLabelProps={{ shrink: true }}
               inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
               InputProps={{
@@ -514,7 +540,7 @@ const Home = () => {
             <TextField
               type="datetime-local"
               value={dateNow}
-              onChange={(e) => setDateNow(e.target.value)}
+              onChange={handleToDate}
               InputLabelProps={{ shrink: true }}
               inputProps={{ style: { height: "30px", fontSize: "0.8em" } }}
               InputProps={{

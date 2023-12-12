@@ -368,7 +368,11 @@ const CompanyData = () => {
                   leaveDelay={200}
                 >
                   <TableCell>
-                    <div className="h-8 overflow-hidden w-22 text-xs">
+                    <div
+                      className={`h-8 overflow-hidden w-28 text-xs ${
+                        header === "REPORTING SUBJECT" && "w-20"
+                      }`}
+                    >
                       {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")]
                       )}
@@ -380,7 +384,7 @@ const CompanyData = () => {
                 header !== "REPORTING SUBJECT" &&
                 header !== "DETAIL SUMMARY" && (
                   <TableCell className="table-cell" size="small">
-                    <div className="h-14 overflow-hidden text-xs">
+                    <div className="h-14 overflow-hidden text-xs w-14">
                       {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")]
                       )}

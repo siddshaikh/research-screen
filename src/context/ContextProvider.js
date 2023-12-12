@@ -39,31 +39,18 @@ const ContextProvider = ({ children }) => {
   const [searchValue, setSearchValue] = useState("");
   // dates
   const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-  const day = String(currentDate.getDate()).padStart(2, "0");
-  const hours = String(currentDate.getHours()).padStart(2, "0");
-  const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-  const seconds = String(currentDate.getSeconds()).padStart(2, "0");
 
-  const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  // Get the date for 24 hours later
+  const nextDay = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
+
+  const formattedDate = currentDate
+    .toISOString()
+    .slice(0, 16)
+    .replace("T", " ");
+  const formattedNextDay = nextDay.toISOString().slice(0, 16).replace("T", " ");
 
   const [fromDate, setFromDate] = useState(formattedDate);
-
-  const [dateNow, setDateNow] = useState("");
-
-  useEffect(() => {
-    const fromDateObject = new Date(fromDate);
-    const nextDay = new Date(fromDateObject);
-    nextDay.setDate(nextDay.getDate() + 1);
-    nextDay.setHours(11, 59, 59, 999);
-    const toDateStringFormatted = nextDay
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
-
-    setDateNow(toDateStringFormatted);
-  }, [fromDate]);
+  const [dateNow, setDateNow] = useState(formattedNextDay);
 
   // dates end
   const [showTableData, setShowTableData] = useState(false);
