@@ -278,7 +278,7 @@ const Home = () => {
             date_type: dateType,
             from_date: fromDate,
             to_date: dateNow,
-            search_text: searchValue, //optional
+            search_text: searchValue,
             // qc1_by: "qc1_user", //optional using condition
             // qc2_by: "qc2_user", //optional using condition
             is_qc1: qc1done,

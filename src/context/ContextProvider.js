@@ -55,8 +55,8 @@ const ContextProvider = ({ children }) => {
   useEffect(() => {
     const fromDateObject = new Date(fromDate);
     const nextDay = new Date(fromDateObject);
-    nextDay.setDate(nextDay.getDate() + 2);
-    nextDay.setHours(23, 59, 59, 999);
+    nextDay.setDate(nextDay.getDate() + 1);
+    nextDay.setHours(11, 59, 59, 999);
     const toDateStringFormatted = nextDay
       .toISOString()
       .slice(0, 19)

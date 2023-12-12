@@ -368,7 +368,7 @@ const CompanyData = () => {
                   leaveDelay={200}
                 >
                   <TableCell>
-                    <div className="h-8 overflow-hidden w-10 text-xs">
+                    <div className="h-8 overflow-hidden w-22 text-xs">
                       {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")]
                       )}
