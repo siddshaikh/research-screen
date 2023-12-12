@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState } from "react";
 
 export const ResearchContext = createContext(null);
 const ContextProvider = ({ children }) => {
