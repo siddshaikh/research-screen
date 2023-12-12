@@ -36,3 +36,7 @@ input[type="text"] {
 ::-webkit-scrollbar-thumb:hover {
   background: #4b5563;
 }
+::-webkit-scrollbar {
+  width: 8px;
+  height: 4px;
+}

@@ -351,7 +351,7 @@ const CompanyData = () => {
     return tableData.length > 0 && showTableData ? (
       dataToRender.map((rowData, rowIndex) => (
         <TableRow key={rowIndex} sx={{ overflow: "hidden" }}>
-          <TableCell>
+          <TableCell size="small">
             <Checkbox
               checked={selectedRowData.includes(rowData)}
               onChange={() => handleRowSelect(rowData)}
@@ -368,7 +368,7 @@ const CompanyData = () => {
                   enterDelay={500}
                   leaveDelay={200}
                 >
-                  <TableCell size="small">
+                  <TableCell>
                     <div className="h-8 overflow-hidden w-10 text-xs">
                       {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")]
@@ -612,18 +612,14 @@ const CompanyData = () => {
 
               {showTableData &&
                 tableHeaders?.map((header) => (
-                  <TableCell
+                  <td
                     key={header}
-                    size="small"
                     onClick={() =>
                       handleSort(header.toLowerCase().replace(/ /g, "_"))
                     }
-                    sx={{
-                      cursor: "pointer",
-                      fontSize: "15px",
-                      letterSpacing: "2px",
-                    }}
-                    className={`text-gray-200 font-bold `}
+                    className={
+                      "text-gray-200 cursor-pointer font-thin text-sm tracking-wider border-1 p-2"
+                    }
                   >
                     {header === "REPORTING TONE"
                       ? "REPORT-TONE"
@@ -632,7 +628,7 @@ const CompanyData = () => {
                       : header && header === "SUBCATEGORY"
                       ? "SUBCATE"
                       : header}
-                  </TableCell>
+                  </td>
                 ))}
             </tr>
           </thead>
