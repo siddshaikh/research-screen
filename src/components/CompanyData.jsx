@@ -256,14 +256,15 @@ const CompanyData = () => {
   const handlePostData = async () => {
     setSavedSuccess(true);
     setPostingLoading(true);
+    // if company has not selected(get company ids)
+    const comapnyNames = updatedRows.map((item) => item.company_name);
+    let foundCompanyIds = comapnyNames.map((name) => {
+      let foundObject = company.find((obj) => obj.companyname === name);
+      return foundObject ? foundObject.companyid : null;
+    });
 
-    // Check if companyId is a single string and format accordingly
-    const formattedCompanyId = Array.isArray(companyId)
-      ? companyId.map((item) => `'${item}'`).join(",")
-      : companyId.replace(/'/g, "");
-
-    const dataToSend = updatedRows.map((row) => ({
-      COMPANYID: formattedCompanyId,
+    const dataToSending = updatedRows.map((row, index) => ({
+      COMPANYID: foundCompanyIds[index] || "", // Fetching the ID corresponding to the row
       DETAILSUMMARY: row.detail_summary,
       KEYWORD: "",
       MODIFIEDBY: name,
@@ -277,8 +278,8 @@ const CompanyData = () => {
 
     try {
       const url = "http://51.68.220.77:8000/update2database/";
-      if (dataToSend.length > 0) {
-        await axios.post(url, dataToSend, {
+      if (dataToSending.length > 0) {
+        await axios.post(url, dataToSending, {
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + userToken,
