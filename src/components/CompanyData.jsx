@@ -361,7 +361,8 @@ const CompanyData = () => {
             <React.Fragment key={header}>
               {(header === "HEADLINE" ||
                 header === "REPORTING SUBJECT" ||
-                header === "DETAIL SUMMARY") && (
+                header === "DETAIL SUMMARY" ||
+                header === "KEYWORD") && (
                 <Tooltip
                   title={rowData[header.toLowerCase().replace(/ /g, "_")]}
                   placement="top"
@@ -371,7 +372,9 @@ const CompanyData = () => {
                   <TableCell>
                     <div
                       className={`h-8 overflow-hidden w-28 text-xs ${
-                        header === "REPORTING SUBJECT" && "w-20"
+                        (header === "REPORTING SUBJECT" && "w-16") ||
+                        (header === "HEADLINE" && "w-72") ||
+                        (header === "DETAIL SUMMARY" && "w-72")
                       }`}
                     >
                       {highlightSearch(
@@ -383,7 +386,8 @@ const CompanyData = () => {
               )}
               {header !== "HEADLINE" &&
                 header !== "REPORTING SUBJECT" &&
-                header !== "DETAIL SUMMARY" && (
+                header !== "DETAIL SUMMARY" &&
+                header !== "KEYWORD" && (
                   <TableCell className="table-cell" size="small">
                     <div className="h-14 overflow-hidden text-xs w-14">
                       {highlightSearch(
@@ -435,6 +439,18 @@ const CompanyData = () => {
       {/* filters for editing the cells */}
       <div className="flex gap-2 items-center">
         <div className="flex items-center gap-2 ml-2">
+          {/* search values using dropdown */}
+          <FormControl sx={{ width: "10rem" }}>
+            <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
+              Select
+            </InputLabel>
+            <Select sx={{ height: 30, fontSize: "0.8em" }} label="select">
+              <MenuItem value="headline">Headline</MenuItem>
+              <MenuItem value="author">Author</MenuItem>
+              <MenuItem value="publication">Publication</MenuItem>
+              <MenuItem value="subject">Subject</MenuItem>
+            </Select>
+          </FormControl>
           {/* searchfield for the searching tableData */}
           <TextField
             placeholder="Find Text"
@@ -625,12 +641,34 @@ const CompanyData = () => {
                       "text-gray-200 cursor-pointer font-thin text-sm tracking-wider border-1 p-2"
                     }
                   >
-                    {header === "REPORTING TONE"
-                      ? "REPORT-TONE"
+                    {header && header === "CLIENT NAME"
+                      ? "CLIENT"
+                      : header === "REPORTING TONE"
+                      ? "TONE"
                       : header && header === "REPORTING SUBJECT"
-                      ? "REPORT-SUB"
+                      ? "SUBJECT"
                       : header && header === "SUBCATEGORY"
                       ? "SUBCATE"
+                      : header && header === "DETAIL SUMMARY"
+                      ? "SUMMARY"
+                      : header && header === "COMPANY NAME"
+                      ? "COMPANY"
+                      : header === "AUTHOR NAME"
+                      ? "AUTHOR"
+                      : header === "QC1 DONE"
+                      ? "QC1"
+                      : header === "QC2 DONE"
+                      ? "QC2"
+                      : header === "SOCIAL FEED ID"
+                      ? "FEED-ID"
+                      : header === "FEED DATE TIME"
+                      ? "FEED-DATE"
+                      : header === "UPLOAD DATE"
+                      ? "UPLOAD"
+                      : header === "HAS IMAGE"
+                      ? "IMAGE"
+                      : header === "HAS VIDEO"
+                      ? "VIDEO"
                       : header}
                   </td>
                 ))}

@@ -130,10 +130,11 @@ const Home = () => {
     if (clientData.data) {
       setClients(clientData.data.clients);
       setLanguage([]);
+      setTableData([]);
     } else {
       console.log(ClientEror);
     }
-  }, [clientData, setClients, ClientEror, setLanguage]);
+  }, [clientData, setClients, ClientEror, setLanguage, setTableData]);
   // fetching the companies
   const {
     data: companyData,
@@ -428,7 +429,7 @@ const Home = () => {
       ) : (
         <>
           {/* clients */}
-          <FormControl sx={{ m: 1, width: 200 }}>
+          <FormControl sx={{ m: 1, width: 300 }}>
             <InputLabel
               id="demo-multiple-name-label"
               sx={{ fontSize: "0.8rem", margin: "-7px" }}
@@ -459,7 +460,7 @@ const Home = () => {
             </Select>
           </FormControl>
           {/* comapany */}
-          <FormControl sx={{ m: 1, width: 200 }}>
+          <FormControl sx={{ m: 1, width: 220 }}>
             <InputLabel
               id="demo-multiple-checkbox-label"
               sx={{ fontSize: "0.8rem", margin: "-7px" }}

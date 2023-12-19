@@ -38,5 +38,5 @@ input[type="text"] {
 }
 ::-webkit-scrollbar {
   width: 8px;
-  height: 4px;
+  height: 8px;
 }
