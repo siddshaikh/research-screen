@@ -129,8 +129,6 @@ const Home = () => {
   useEffect(() => {
     if (clientData.data) {
       setClients(clientData.data.clients);
-      setLanguage([]);
-      setTableData([]);
     } else {
       console.log(ClientEror);
     }
@@ -292,6 +290,7 @@ const Home = () => {
   }, [language, continent, country, qc1by, qc2by]);
   // searching the tabledata using multiple parameters
   const handleSearch = async () => {
+    setTableData([]);
     if (clientId) {
       if (unsavedChanges) {
         toast.error("You might be missing to save");

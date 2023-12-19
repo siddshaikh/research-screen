@@ -44,6 +44,7 @@ const CompanyData = () => {
   // selectedRowData
   const [selectedRowData, setSelectedRowData] = useState([]);
   // search values from the table
+  const [headerForSearch, setHeaderForSearch] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const [searchedData, setSearchedData] = useState([]);
   // data for the edit
@@ -197,22 +198,18 @@ const CompanyData = () => {
 
   // handle Search Table Values
   const handleSearch = () => {
-    if (searchValue.trim() === "") {
+    if (searchValue.trim() === "" || !headerForSearch) {
       setSearchedData([]);
       return;
     }
 
     const output = tableData.filter((rowData) => {
-      for (const key in rowData) {
-        if (Object.prototype.hasOwnProperty.call(rowData, key)) {
-          const value = rowData[key];
-          if (
-            value !== null &&
-            value.toString().toLowerCase().includes(searchValue.toLowerCase())
-          ) {
-            return true;
-          }
-        }
+      const value = rowData[headerForSearch];
+      if (
+        value !== null &&
+        value.toString().toLowerCase().includes(searchValue.toLowerCase())
+      ) {
+        return true;
       }
       return false;
     });
@@ -444,11 +441,16 @@ const CompanyData = () => {
             <InputLabel sx={{ fontSize: "0.8rem", margin: "-7px" }}>
               Select
             </InputLabel>
-            <Select sx={{ height: 30, fontSize: "0.8em" }} label="select">
+            <Select
+              sx={{ height: 30, fontSize: "0.8em" }}
+              label="select"
+              value={headerForSearch}
+              onChange={(e) => setHeaderForSearch(e.target.value)}
+            >
               <MenuItem value="headline">Headline</MenuItem>
-              <MenuItem value="author">Author</MenuItem>
+              <MenuItem value="author_name">Author</MenuItem>
               <MenuItem value="publication">Publication</MenuItem>
-              <MenuItem value="subject">Subject</MenuItem>
+              <MenuItem value="reporting_subject">Subject</MenuItem>
             </Select>
           </FormControl>
           {/* searchfield for the searching tableData */}
